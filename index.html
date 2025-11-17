@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Starry Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin:0; padding:0; font-family:'Cairo', Arial, sans-serif; background:#000; overflow:hidden;
+            height:100vh; position:relative; display:flex; justify-content:center; align-items:center; }
+        .stars { position:absolute; top:0; left:0; width:100%; height:100%; 
+            background-image: url('https://github.com/elmoftary-vr/Halthalk-/raw/72fd5e93c2842194205f99268571f3e15da4568a/a9c37159-66bf-4332-aac7-c9db466d21a3-1024x576.webp');
+            background-size: cover; background-position: center; background-repeat: no-repeat; }
+        .stars::before { content:''; position:absolute; top:0; left:0; width:100%; height:100%;
+            background-image: radial-gradient(2px 2px at 20px 30px,#eee,transparent),
+                              radial-gradient(2px 2px at 40px 70px,#fff,transparent),
+                              radial-gradient(1px 1px at 90px 40px,#eee,transparent);
+            background-repeat:repeat; background-size:200px 100px; }
+        .container { text-align:center; z-index:1; position:relative;
+            display:flex; flex-direction:column; align-items:center; cursor:move; max-width:1000px; width:100%; }
+        h1 { color:#fff; font-size:2em; margin-bottom:30px; text-shadow:0 0 20px #fff; }
+        .button { display:block; width:180px; height:50px; margin:8px 0; font-size:0.9em; color:#fff;
+            background:transparent; border:2px solid rgba(255,255,255,0.5); border-radius:10px; text-decoration:none;
+            transition:all .3s ease; box-shadow:0 0 20px rgba(255,255,255,0.3); position:relative; overflow:hidden;
+            line-height:50px; text-align:center; animation:float 3s ease-in-out infinite; }
+        .button::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition:left .5s; border-radius:10px; }
+        .button:hover::before { left:100%; }
+        .button:hover { transform:scale(1.05) rotate(2deg); box-shadow:0 0 30px rgba(255,255,255,0.6); border-color:rgba(255,255,255,0.8); animation:bounce .6s ease; }
+        @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+        @keyframes bounce { 0%,20%,50%,80%,100%{transform:translateY(0) scale(1.05) rotate(2deg);} 40%{transform:translateY(-10px) scale(1.05) rotate(2deg);} 60%{transform:translateY(-5px) scale(1.05) rotate(2deg);} }
+        .developer-button { border-color: rgba(255,107,107,0.5); }
+        .developer-button:hover { border-color: rgba(255,107,107,0.8); }
+        .updates-button { border-color: rgba(79,172,254,0.5); }
+        .updates-button:hover { border-color: rgba(79,172,254,0.8); }
+
+        /* Vibration animation */
+        @keyframes vibrate {
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-3px); }
+            20% { transform: translateX(3px); }
+            30% { transform: translateX(-3px); }
+            40% { transform: translateX(3px); }
+            50% { transform: translateX(-3px); }
+            60% { transform: translateX(3px); }
+            70% { transform: translateX(-3px); }
+            80% { transform: translateX(3px); }
+            90% { transform: translateX(-3px); }
+            100% { transform: translateX(0); }
+        }
+        .vibrate {
+            animation: vibrate 0.5s ease-in-out;
+        }
+
+        /* Footer text */
+        .footer { color:#fff; font-size:0.7em; margin-top:30px; opacity:0.7; text-shadow:0 0 10px #fff; text-decoration:none; }
+        .footer:hover { opacity:1; text-decoration:underline; }
+
+        /* Meteor animation */
+        @keyframes meteor {
+            0% { transform: translateX(0) translateY(0) rotate(45deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(120vw) translateY(120vh) rotate(45deg); opacity: 0; }
+        }
+        .meteor {
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(to bottom right, #fff, transparent);
+            border-radius: 50%;
+            position: absolute;
+            animation: meteor 3s linear infinite;
+            animation-delay: calc(var(--delay, 0) * 1s);
+        }
+
+        /* Up and down movement for stars */
+        @keyframes upDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* White and red shooting stars: burning, swaying, fast (now slowed down) */
+        @keyframes whiteRedShootingStar {
+            0% { 
+                transform: translateX(-10px) translateY(0) rotate(0deg); 
+                opacity: 0; 
+                background: radial-gradient(circle, #fff, #ff8c00); 
+                box-shadow: 0 0 5px #fff; 
+            }
+            10% { 
+                opacity: 1; 
+                transform: translateX(10vw) translateY(10vh) rotate(10deg); 
+                background: radial-gradient(circle, #fff, #ff4500); 
+                box-shadow: 0 0 15px #fff; 
+            }
+            50% { 
+                transform: translateX(50vw) translateY(50vh) rotate(-10deg); 
+                background: radial-gradient(circle, #ff4500, #ff0000); 
+                box-shadow: 0 0 20px #ff4500; 
+            }
+            90% { 
+                opacity: 1; 
+                transform: translateX(90vw) translateY(90vh) rotate(10deg); 
+                background: radial-gradient(circle, #ff0000, transparent); 
+                box-shadow: 0 0 10px #ff0000; 
+            }
+            100% { 
+                transform: translateX(110vw) translateY(110vh) rotate(0deg); 
+                opacity: 0; 
+                background: transparent; 
+                box-shadow: none; 
+            }
+        }
+        .yellow-star {  /* Renamed class for clarity, but keeping name for compatibility */
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #fff, #ff8c00);
+            border-radius: 50%;
+            position: absolute;
+            animation: whiteRedShootingStar 4s linear infinite;  /* Slowed down from 2.5s to 4s */
+            animation-delay: calc(var(--delay, 0) * 1s);
+            box-shadow: 0 0 5px #fff;
+        }
+
+        /* 3D Card Hover Effect Styles - Restored to original */
+        .card-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            z-index: 1;
+            position: relative;
+        }
+        .card {
+            width: 160px;
+            height: 214px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+            margin: 0 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        .card .wrapper {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+            transition: all 0.3s ease;
+        }
+        .card:hover .wrapper {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+        }
+        .cover-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            animation: floatBackground 6s ease-in-out infinite; /* Added floating animation for background */
+        }
+        .card .title {
+            width: 100%;
+            padding: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        .card:hover .title {
+            transform: translateY(-20px);
+        }
+        .character {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            transition: all 0.3s ease;
+            animation: floatVertical 4s ease-in-out infinite; /* Added floating animation */
+        }
+        .card:hover .character {
+            transform: translateY(-20px) scale(1.1);
+        }
+
+        /* New keyframe for vertical floating of character */
+        @keyframes floatVertical {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(20px); }
+        }
+
+        /* New keyframe for background floating */
+        @keyframes floatBackground {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Media query for laptops and computers (screens >= 768px) */
+        @media (min-width: 768px) {
+            h1 {
+                font-size: 2.5em; /* Larger font for better readability on desktops */
+            }
+            .card-container {
+                flex-wrap: wrap; /* Allow cards to wrap if needed on wider screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars">
+        <!-- Animated stars added over the background -->
+        <div class="meteor" style="--delay: 0; top: 10%; left: 20%;"></div>
+        <div class="meteor" style="--delay: 1; top: 20%; left: 50%;"></div>
+        <div class="meteor" style="--delay: 2; top: 30%; left: 80%;"></div>
+        <div class="meteor" style="--delay: 3; top: 40%; left: 10%;"></div>
+        <div class="meteor" style="--delay: 4; top: 50%; left: 60%;"></div>
+        <div class="meteor" style="--delay: 5; top: 60%; left: 30%;"></div>
+        <div class="meteor" style="--delay: 6; top: 70%; left: 70%;"></div>
+        <div class="meteor" style="--delay: 7; top: 80%; left: 40%;"></div>
+        <div class="meteor" style="--delay: 8; top: 90%; left: 90%;"></div>
+        <div class="yellow-star" style="--delay: 0; top: 15%; left: 25%;"></div>
+        <div class="yellow-star" style="--delay: 1; top: 25%; left: 55%;"></div>
+        <div class="yellow-star" style="--delay: 2; top: 35%; left: 85%;"></div>
+        <div class="yellow-star" style="--delay: 3; top: 45%; left: 15%;"></div>
+        <div class="yellow-star" style="--delay: 4; top: 55%; left: 65%;"></div>
+        <div class="yellow-star" style="--delay: 5; top: 65%; left: 35%;"></div>
+        <div class="yellow-star" style="--delay: 6; top: 75%; left: 75%;"></div>
+        <div class="yellow-star" style="--delay: 7; top: 85%; left: 45%;"></div>
+        <div class="yellow-star" style="--delay: 8; top: 95%; left: 95%;"></div>
+    </div>
+
+    <div class="container" id="container">
+        <h1>اهلا بك عزيزي الطالب في منصة حلتهالك</h1>
+
+        <a href="https://halthalk.eyoo.org/" class="button" target="_blank" rel="noopener noreferrer">دخول المنصة</a>
+
+        <!-- زرار المؤسس: href طبيعي + target + rel -->
+        <a id="founderLink" href="https://t.me/Halthalkrobot" class="button developer-button"
+           target="_blank" rel="noopener noreferrer" aria-label="فتح تليجرام فريق الدعم">فريق الدعم</a>
+
+        <a href="https://t.me/Halthalk" class="button updates-button" target="_blank" rel="noopener noreferrer">تحديثات المنصة</a>
+
+        <div class="card-container">
+            <div class="card">
+                <div class="wrapper">
+                    <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-cover.jpg" class="cover-image" />
+                </div>
+                <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk-/76321efe524a9eabd3113ee58917268e80084552/20251116_095455.png" class="title" />
+                <img src="https://ggayane.github.io/css-experiments/cards/dark_rider-character.webp" class="character" />
+            </div>
+
+            <div class="card">
+                <div class="wrapper">
+                    <img src="https://ggayane.github.io/css-experiments/cards/force_mage-cover.jpg" class="cover-image" />
+                </div>
+                <img src="https://raw.githubusercontent.com/elmoftary-vr/Halthalk-/f27d8f2f2906d61a78f1422e381820ddc48748f3/20251116_095836.png" class="title" />
+                <img src="https://ggayane.github.io/css-experiments/cards/force_mage-character.webp" class="character" />
+            </div>
+        </div>
+
+        <a href="https://t.me/HalthalkBot" class="footer" target="_blank" rel="noopener noreferrer">جميع الحقوق محفوظة 2026</a>
+    </div>
+
+    <script>
+        // Fallback JS: في بعض البيئات (داخل WebView أو بعض iframes مثل CodePen) الروابط قد تُمنع،
+        // فبنستخدم window.open عند ال

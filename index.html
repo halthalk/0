@@ -95,6 +95,15 @@
             text-decoration: none;
             background-color: rgba(29, 161, 242, 0.1);
         }
+        
+        /* التنسيق الجديد لزر التقارير في الهيدر */
+        #reportLinkHeader {
+             color: #FF0000; /* اللون الأحمر المطلوب */
+        }
+        #reportLinkHeader:hover {
+             background-color: rgba(255, 0, 0, 0.1); 
+        }
+
         .logo {
             width: 120px;
             height: 60px;
@@ -172,6 +181,15 @@
             align-items: center;
             margin-top: 20px;
         }
+        
+        /* التنسيق الجديد لتجميع الأزرار المتجاورة */
+        .button-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap; /* للسماح لها بالنزول لسطر جديد على الشاشات الصغيرة */
+            margin-bottom: 10px; /* مسافة بين مجموعات الأزرار */
+        }
+
         .button {
             display: inline-block;
             padding: 12px 24px;
@@ -184,6 +202,7 @@
             text-decoration: none;
             transition: background 0.3s;
             cursor: pointer;
+            text-align: center; /* لضمان تمركز النص */
         }
         .button:hover {
             background: #0d95e8;
@@ -199,6 +218,7 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
+            margin-bottom: 20px; /* فصله عن الأزرار اللي تحته */
         }
         .floating-button:hover {
             box-shadow: 0 0 30px rgba(29, 161, 242, 0.8);
@@ -339,7 +359,7 @@
 
 
         /* ================================================= */
-        /* تنسيقات Modal أضف شيء */
+        /* تنسيقات Modal أضف شيء / تقرير */
         /* ================================================= */
         .modal-content h2 {
             text-align: center;
@@ -394,7 +414,7 @@
             --text-light: #ffffff;
             --text-secondary: #b8c1d1;
             --input-bg: rgba(255, 255, 255, 0.1);
-            --bubble-self-bg: linear-gradient(135deg, var(--telegram-blue), var(--telegram-dark-blue));
+            --bubble-self-bg: linear-gradient(135deg, #1da1f2, #0d95e8); /* لون أزرق موحد */
             --bubble-other-bg: rgba(255, 255, 255, 0.15);
             
             /* ألوان الوضع الفاتح */
@@ -1061,7 +1081,7 @@
         <div class="nav-links">
             <a href="#" title="الاستكشاف"><i class="fas fa-search"></i></a>
             <a href="#" id="messagesLinkHeader" title="الرسائل"><i class="fas fa-envelope"></i></a>
-            <a href="#" id="addThingHeaderBtn" title="أضف شئ"><i class="fas fa-plus"></i></a>
+            <a href="#" id="reportLinkHeader" title="التقارير"><i class="fas fa-bug"></i></a> <a href="#" id="addThingHeaderBtn" title="أضف شئ"><i class="fas fa-plus"></i></a>
         </div>
         <div style="display: flex; align-items: center;">
             <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
@@ -1077,6 +1097,7 @@
         <a href="#" class="menu-item" id="messagesLinkSidebar"><i class="fas fa-envelope"></i> الرسائل</a>
         <a href="https://t.me/Halthalkrobot" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-user"></i> فريق الدعم</a>
         <a href="https://t.me/Halthalk" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-info-circle"></i> قناتنا الرسمية</a>
+        <a href="#" class="menu-item" id="reportLinkSidebar"><i class="fas fa-bug"></i> إرسال تقرير / ملاحظة</a>
         <a href="#" class="menu-item" id="addThingSidebarBtn"><i class="fas fa-plus"></i> أضف شيء</a> </div>
 
     <div class="main-content">
@@ -1087,8 +1108,17 @@
 
         <div class="buttons-section">
             <a href="https://halthalk.eyoo.org/" class="button floating-button">دخول المنصة</a>
-            <a href="https://t.me/Halthalkrobot" class="button" target="_blank" rel="noopener noreferrer">فريق الدعم</a>
-            <a href="https://t.me/Halthalk" class="button" target="_blank" rel="noopener noreferrer">تحديثات المنصة</a>
+            
+            <div class="button-group">
+                <a href="#" class="button" style="background: #e91e63;">نظام لغات</a>
+                <a href="#" class="button" style="background: #ff9800;">نظام أزهري</a>
+            </div>
+
+            <div class="button-group">
+                <a href="https://t.me/Halthalkrobot" class="button" target="_blank" rel="noopener noreferrer">فريق الدعم</a>
+                <a href="https://t.me/Halthalk" class="button" target="_blank" rel="noopener noreferrer">تحديثات المنصة</a>
+            </div>
+
         </div>
 
         <div class="tribute-text">
@@ -1150,6 +1180,26 @@
         </div>
     </div>
     
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeReportModal()">&times;</span>
+            <h2><i class="fas fa-bug"></i> تقرير / ملاحظة فنية</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #ff5252;">أبلغ عن خطأ، أو أرسل ملاحظة لتحسين الأداء!</p>
+            <form id="reportForm" class="modal-form">
+                <label for="reporterName">اسمك (اختياري):</label>
+                <input type="text" id="reporterName" name="reporterName">
+
+                <label for="issueType">نوع المشكلة / الملاحظة:</label>
+                <input type="text" id="issueType" name="issueType" placeholder="مثل: خطأ في زر الرسائل، اقتراح إضافة خاصية..">
+
+                <label for="reportDescription">التفاصيل الكاملة:</label>
+                <textarea id="reportDescription" name="reportDescription" rows="5" required></textarea>
+
+                <button type="submit" style="background: #ff5252;"><i class="fas fa-paper-plane"></i> إرسال التقرير</button>
+            </form>
+        </div>
+    </div>
+
     <div id="notificationModal" class="modal">
         <div class="modal-content" style="max-width: 400px; text-align: center; padding: 40px 20px;">
             <span class="close-btn" onclick="closeNotificationModal()">&times;</span>
@@ -1299,15 +1349,27 @@
         // المتغيرات الجديدة الخاصة بالإشعارات
         const notificationModal = document.getElementById('notificationModal');
         const notificationLinkSidebar = document.getElementById('notificationLinkSidebar');
+        
+        // المتغيرات الجديدة الخاصة بالتقارير
+        const reportModal = document.getElementById('reportModal');
+        const reportForm = document.getElementById('reportForm');
+        const reportLinkSidebar = document.getElementById('reportLinkSidebar');
+        const reportLinkHeader = document.getElementById('reportLinkHeader'); // الزر الجديد في الهيدر
 
         // تعريف التوكن ومعرف المستلم الجديد لـ 'أضف شيء'
-        const ADD_THING_BOT_TOKEN = '8150970842:AAH1fWCntUzVNnE6Nq9TXW8SH-MmM9ycvfk';
-        const ADD_THING_CHAT_ID = '7428842238';
+        const ADD_THING_BOT_TOKEN = '8102433429:AAEWLBKx68nh19kWG9sEFMqFP4_cgRF9GcE'; // تم تحديث التوكن
+        const ADD_THING_CHAT_ID = '7428842238'; // تم تحديث الـ ID
+        
+        // تعريف التوكن ومعرف المستلم للتقارير (تم تحديث القيم)
+        const REPORTING_BOT_TOKEN = '8102433429:AAEWLBKx68nh19kWG9sEFMqFP4_cgRF9GcE'; 
+        const REPORTING_CHAT_ID = '7428842238'; 
+
 
         function openAddThingModal(e) {
             if (e) e.preventDefault();
             closeChat(null); // تأكد من إغلاق نافذة الرسائل أولاً
             closeNotificationModal(); // إغلاق نافذة الإشعارات
+            closeReportModal(); // إغلاق نافذة التقرير
             addThingModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
@@ -1323,9 +1385,11 @@
             const name = document.getElementById('thingTitle').value.trim(); 
             const age = document.getElementById('thingLink').value.trim(); 
             const description = document.getElementById('thingDescription').value.trim();
+            const currentTime = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
 
             const message = `
-**طلب إضافة/اقتراح جديد:**
+**[✅ طلب إضافة/اقتراح جديد]**
+* **الوقت (EET):** ${currentTime}
 * **الاسم:** ${name}
 * **العمر:** ${age || 'لم يحدد'}
 * **التفاصيل:** ${description}
@@ -1341,6 +1405,50 @@
         });
 
         // =================================================
+        // الدوال الخاصة بـ Modal التقارير (جديد)
+        // =================================================
+
+        function openReportModal(e) {
+            if (e) e.preventDefault();
+            closeChat(null); 
+            closeAddThingModal(); 
+            closeNotificationModal(); 
+            reportModal.style.display = 'flex';
+            body.classList.add('page-hidden');
+        }
+
+        function closeReportModal() {
+            reportModal.style.display = 'none';
+            body.classList.remove('page-hidden');
+        }
+
+        reportForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('reporterName').value.trim(); 
+            const type = document.getElementById('issueType').value.trim(); 
+            const description = document.getElementById('reportDescription').value.trim();
+            const currentTime = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+
+            const message = `
+**[⚠️ تقرير فني / ملاحظة جديدة]**
+* **الوقت (EET):** ${currentTime}
+* **المرسل (اختياري):** ${name || 'مجهول'}
+* **نوع المشكلة:** ${type || 'لم يحدد'}
+* **التفاصيل:** ${description}
+`;
+            
+            sendTextToTelegram(message, REPORTING_BOT_TOKEN, REPORTING_CHAT_ID).then(() => {
+                alert('شكراً لك! تم إرسال التقرير بنجاح وسيتم العمل عليه.');
+                reportForm.reset();
+                closeReportModal();
+            }).catch(() => {
+                alert('حدث خطأ أثناء الإرسال. يرجى المحاولة لاحقاً.');
+            });
+        });
+
+
+        // =================================================
         // الدوال الخاصة بـ Modal الإشعارات
         // =================================================
 
@@ -1348,6 +1456,7 @@
             if (e) e.preventDefault();
             closeChat(null);      // تأكد من إغلاق نافذة الرسائل أولاً
             closeAddThingModal(); // تأكد من إغلاق نافذة أضف شيء ثانياً
+            closeReportModal(); // إغلاق نافذة التقرير
             notificationModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
@@ -1366,6 +1475,7 @@
             if (e) e.preventDefault();
             closeAddThingModal(); // تأكد من إغلاق نافذة أضف شيء أولاً
             closeNotificationModal(); // إغلاق نافذة الإشعارات
+            closeReportModal(); // إغلاق نافذة التقرير
             chatPopup.style.display = 'flex';
             body.classList.add('page-hidden');
             backToList(); // عرض قائمة الدردشات أولاً
@@ -1387,6 +1497,10 @@
         // ربط زر الإشعارات (Sidebar فقط)
         if (notificationLinkSidebar) notificationLinkSidebar.addEventListener('click', openNotificationModal);
         
+        // ربط زر التقارير (جديد)
+        if (reportLinkSidebar) reportLinkSidebar.addEventListener('click', openReportModal);
+        if (reportLinkHeader) reportLinkHeader.addEventListener('click', openReportModal); // ربط زر الهيدر الجديد
+        
         window.addEventListener('click', (event) => {
              if (event.target === chatPopup) {
                  closeChat(event);
@@ -1397,6 +1511,9 @@
              if (event.target === notificationModal) { // إغلاق نافذة الإشعارات عند النقر خارجها
                  closeNotificationModal();
              }
+             if (event.target === reportModal) { // إغلاق نافذة التقرير عند النقر خارجها
+                 closeReportModal();
+             }
          });
 
 
@@ -1404,6 +1521,7 @@
         // الكود المضاف من واجهة الرسائل (Telegram-like)
         // =================================================
 
+        // تم ترك قيم الرسائل الداخلية كما هي
         const CHAT_BOT_TOKEN = '8490684701:AAHUk7Ayn8RmrreRbfVLX41c5nI1EhR3CxE'; // توكن الرسائل الداخلية
         const CHAT_RECEIVER_ID = '7428842238'; // معرف المستلم للرسائل الداخلية
         const CHAT_STORAGE_KEY = 'telegram_chat_owner';
@@ -2033,6 +2151,7 @@
             closeChat(null); 
             closeAddThingModal();
             closeNotificationModal(); // إغلاق نافذة الإشعارات عند التحميل
+            closeReportModal(); // إغلاق نافذة التقرير عند التحميل
         });
     </script>
 </body>

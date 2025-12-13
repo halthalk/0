@@ -73,30 +73,13 @@
             padding: 0 20px;
             z-index: 100;
         }
+        
+        /* إخفاء شريط التنقل القديم (Nav-links) */
         .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-        .nav-links a {
-            color: #1da1f2;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            font-size: 20px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background-color 0.2s;
-        }
-        .nav-links a:hover {
-            text-decoration: none;
-            background-color: rgba(29, 161, 242, 0.1);
+            display: none !important; 
         }
         
-        /* التنسيق الجديد لزر التقارير في الهيدر */
+        /* التنسيق الجديد لزر التقارير في الهيدر (لم يعد مستخدماً في الهيدر مباشرة لكن نحافظ عليه) */
         #reportLinkHeader {
              color: #FF0000; /* اللون الأحمر المطلوب */
         }
@@ -286,6 +269,10 @@
         .footer a:hover {
             text-decoration: underline;
         }
+        
+        /* ================================================= */
+        /* التنسيقات الخاصة بالهواتف المحمولة */
+        /* ================================================= */
         @media (max-width: 768px) {
             .sidebar {
                 display: none;
@@ -296,6 +283,56 @@
             .universities-section {
                 gap: 10px;
             }
+            
+            /* --- التعديل الجديد لمركزة القائمة المنسدلة على الجوال --- */
+            /* لم تعد مستخدمة ولكن نبقيها احتياطاً في حال استخدام Dropdown */
+            .header-dropdown {
+                left: initial; 
+                right: initial; 
+                top: 65px; 
+                transform: translateX(-50%); 
+                margin-left: 50%; 
+                width: 90%; 
+                max-width: 300px;
+            }
+            /* ----------------------------------------------------- */
+        }
+        
+        /* ================================================= */
+        /* تنسيقات زر الخيارات الجديد في الهيدر */
+        /* ================================================= */
+        
+        /* إعداد مكان الأيقونات الجديدة (لإظهار وإخفاء القائمة المنسدلة) */
+        .nav-actions {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* تنسيق زر الخيارات الجديد */
+        #optionsToggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: none;
+            border: none;
+            color: #1da1f2;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        #optionsToggle:hover {
+            background-color: rgba(29, 161, 242, 0.1);
+        }
+        
+        body.dark-mode #optionsToggle {
+            color: #ffffff;
+        }
+        body.dark-mode #optionsToggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
         
         /* ================================================= */
@@ -350,8 +387,8 @@
             text-decoration: none;
             cursor: pointer;
         }
-        /* تنسيقات خاصة بنافذة الإشعارات */
-        #notificationModal .modal-content {
+        /* تنسيقات خاصة بنافذة الإشعارات والخيارات */
+        #notificationModal .modal-content, #optionsModal .modal-content {
              max-width: 400px;
              text-align: center;
              padding: 40px 20px;
@@ -1078,11 +1115,10 @@
 </head>
 <body>
     <div class="header">
-        <div class="nav-links">
-            <a href="#" title="الاستكشاف"><i class="fas fa-search"></i></a>
-            <a href="#" id="messagesLinkHeader" title="الرسائل"><i class="fas fa-envelope"></i></a>
-            <a href="#" id="reportLinkHeader" title="التقارير"><i class="fas fa-bug"></i></a> <a href="#" id="addThingHeaderBtn" title="أضف شئ"><i class="fas fa-plus"></i></a>
-        </div>
+        <div class="nav-actions">
+            <button id="optionsToggle" title="الخيارات"><i class="fas fa-ellipsis-v"></i></button>
+            
+            </div>
         <div style="display: flex; align-items: center;">
             <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i></button>
             <img src="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png" alt="Logo" class="logo">
@@ -1092,7 +1128,7 @@
 
     <div class="sidebar">
         <a href="#" class="menu-item"><i class="fas fa-home"></i> الرئيسية</a>
-        <a href="#" class="menu-item"><i class="fas fa-search"></i> الاستكشاف</a>
+        <a href="https://t.me/bta3hacker" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-search"></i> الاستكشاف</a>
         <a href="#" class="menu-item" id="notificationLinkSidebar"><i class="fas fa-bell"></i> الإشعارات</a>
         <a href="#" class="menu-item" id="messagesLinkSidebar"><i class="fas fa-envelope"></i> الرسائل</a>
         <a href="https://t.me/Halthalkrobot" class="menu-item" target="_blank" rel="noopener noreferrer"><i class="fas fa-user"></i> فريق الدعم</a>
@@ -1110,8 +1146,8 @@
             <a href="https://halthalk.eyoo.org/" class="button floating-button">دخول المنصة</a>
             
             <div class="button-group">
-                <a href="#" class="button" style="background: #e91e63;">نظام لغات</a>
-                <a href="#" class="button" style="background: #ff9800;">نظام أزهري</a>
+                <a href="https://t.me/A_Dk_A" class="button" style="background: #e91e63;" target="_blank" rel="noopener noreferrer">نظام لغات</a>
+                <a href="https://t.me/MA6_Z" class="button" style="background: #ff9800;" target="_blank" rel="noopener noreferrer">نظام أزهري</a>
             </div>
 
             <div class="button-group">
@@ -1159,7 +1195,21 @@
             <a href="https://t.me/HalthalkBot" target="_blank" rel="noopener noreferrer">جميع الحقوق محفوظة 2026</a>
         </div>
     </div>
-
+    
+    <div id="optionsModal" class="modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 40px 20px;">
+            <span class="close-btn" onclick="closeOptionsModal()">&times;</span>
+            <i class="fas fa-bars" style="font-size: 50px; color: #1da1f2; margin-bottom: 20px;"></i>
+            <h2 style="font-size: 1.5em; color: #1da1f2;">قائمة الخيارات السريعة</h2>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+                 <a href="https://t.me/bta3hacker" class="button" style="background: #1da1f2; margin: 0; padding: 12px 24px;" target="_blank" rel="noopener noreferrer" onclick="closeOptionsModal()"><i class="fas fa-search"></i> الاستكشاف</a>
+                 <a href="#" class="button" id="messagesLinkOptions" style="background: #1da1f2; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-envelope"></i> الرسائل</a>
+                 <a href="#" class="button" id="reportLinkOptions" style="background: #ff5252; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-bug"></i> التقارير</a>
+                 <a href="#" class="button" id="addThingOptionsBtn" style="background: #28a745; margin: 0; padding: 12px 24px;" onclick="closeOptionsModal()"><i class="fas fa-plus"></i> أضف شئ</a>
+            </div>
+        </div>
+    </div>
+    
     <div id="addThingModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeAddThingModal()">&times;</span>
@@ -1339,12 +1389,20 @@
         // =================================================
         const addThingModal = document.getElementById('addThingModal');
         const addThingForm = document.getElementById('addThingForm');
-        const messagesLinkHeader = document.getElementById('messagesLinkHeader');
+        
         const messagesLinkSidebar = document.getElementById('messagesLinkSidebar');
-        const addThingHeaderBtn = document.getElementById('addThingHeaderBtn');
         const addThingSidebarBtn = document.getElementById('addThingSidebarBtn');
         const chatPopup = document.getElementById('popup');
         const telegramChatMessages = document.getElementById('messages');
+
+        // =================================================
+        // المتغيرات الجديدة الخاصة بـ Options Modal
+        // =================================================
+        const optionsModal = document.getElementById('optionsModal');
+        const optionsToggle = document.getElementById('optionsToggle');
+        const messagesLinkOptions = document.getElementById('messagesLinkOptions');
+        const addThingOptionsBtn = document.getElementById('addThingOptionsBtn');
+        const reportLinkOptions = document.getElementById('reportLinkOptions');
         
         // المتغيرات الجديدة الخاصة بالإشعارات
         const notificationModal = document.getElementById('notificationModal');
@@ -1354,7 +1412,7 @@
         const reportModal = document.getElementById('reportModal');
         const reportForm = document.getElementById('reportForm');
         const reportLinkSidebar = document.getElementById('reportLinkSidebar');
-        const reportLinkHeader = document.getElementById('reportLinkHeader'); // الزر الجديد في الهيدر
+        const reportLinkHeader = document.getElementById('reportLinkHeader'); // الزر القديم في الهيدر (غير مستخدم الآن)
 
         // تعريف التوكن ومعرف المستلم الجديد لـ 'أضف شيء'
         const ADD_THING_BOT_TOKEN = '8102433429:AAEWLBKx68nh19kWG9sEFMqFP4_cgRF9GcE'; // تم تحديث التوكن
@@ -1370,6 +1428,7 @@
             closeChat(null); // تأكد من إغلاق نافذة الرسائل أولاً
             closeNotificationModal(); // إغلاق نافذة الإشعارات
             closeReportModal(); // إغلاق نافذة التقرير
+            closeOptionsModal(); // إغلاق نافذة الخيارات
             addThingModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
@@ -1405,7 +1464,7 @@
         });
 
         // =================================================
-        // الدوال الخاصة بـ Modal التقارير (جديد)
+        // الدوال الخاصة بـ Modal التقارير 
         // =================================================
 
         function openReportModal(e) {
@@ -1413,6 +1472,7 @@
             closeChat(null); 
             closeAddThingModal(); 
             closeNotificationModal(); 
+            closeOptionsModal(); // إغلاق نافذة الخيارات
             reportModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
@@ -1457,12 +1517,32 @@
             closeChat(null);      // تأكد من إغلاق نافذة الرسائل أولاً
             closeAddThingModal(); // تأكد من إغلاق نافذة أضف شيء ثانياً
             closeReportModal(); // إغلاق نافذة التقرير
+            closeOptionsModal(); // إغلاق نافذة الخيارات
             notificationModal.style.display = 'flex';
             body.classList.add('page-hidden');
         }
 
         function closeNotificationModal() {
             notificationModal.style.display = 'none';
+            body.classList.remove('page-hidden');
+        }
+
+        // =================================================
+        // الدوال الخاصة بـ Options Modal (جديد)
+        // =================================================
+
+        function openOptionsModal(e) {
+            if (e) e.preventDefault();
+            closeChat(null); 
+            closeAddThingModal(); 
+            closeNotificationModal(); 
+            closeReportModal(); 
+            optionsModal.style.display = 'flex';
+            body.classList.add('page-hidden');
+        }
+
+        function closeOptionsModal() {
+            optionsModal.style.display = 'none';
             body.classList.remove('page-hidden');
         }
 
@@ -1476,6 +1556,7 @@
             closeAddThingModal(); // تأكد من إغلاق نافذة أضف شيء أولاً
             closeNotificationModal(); // إغلاق نافذة الإشعارات
             closeReportModal(); // إغلاق نافذة التقرير
+            closeOptionsModal(); // إغلاق نافذة الخيارات
             chatPopup.style.display = 'flex';
             body.classList.add('page-hidden');
             backToList(); // عرض قائمة الدردشات أولاً
@@ -1487,20 +1568,26 @@
             telegramChatMessages.style.display = 'none';
             body.classList.remove('page-hidden');
         }
-        
+
+        // =================================================
         // ربط مستمعي الأحداث
-        messagesLinkHeader.addEventListener('click', openChat);
+        // =================================================
+
+        // 1. زر الخيارات في الهيدر يفتح الـ Modal الجديد
+        optionsToggle.addEventListener('click', openOptionsModal);
+
+        // 2. ربط الروابط الجديدة في الـ Options Modal
+        messagesLinkOptions.addEventListener('click', openChat); 
+        addThingOptionsBtn.addEventListener('click', openAddThingModal); 
+        reportLinkOptions.addEventListener('click', openReportModal); 
+        
+        // 3. ربط روابط الـ Sidebar القديمة
         messagesLinkSidebar.addEventListener('click', openChat);
-        addThingHeaderBtn.addEventListener('click', openAddThingModal);
         addThingSidebarBtn.addEventListener('click', openAddThingModal);
-        
-        // ربط زر الإشعارات (Sidebar فقط)
         if (notificationLinkSidebar) notificationLinkSidebar.addEventListener('click', openNotificationModal);
-        
-        // ربط زر التقارير (جديد)
         if (reportLinkSidebar) reportLinkSidebar.addEventListener('click', openReportModal);
-        if (reportLinkHeader) reportLinkHeader.addEventListener('click', openReportModal); // ربط زر الهيدر الجديد
-        
+
+        // 4. تحديث دالة إغلاق النوافذ عند النقر خارجها
         window.addEventListener('click', (event) => {
              if (event.target === chatPopup) {
                  closeChat(event);
@@ -1508,11 +1595,14 @@
              if (event.target === addThingModal) {
                  closeAddThingModal();
              }
-             if (event.target === notificationModal) { // إغلاق نافذة الإشعارات عند النقر خارجها
+             if (event.target === notificationModal) {
                  closeNotificationModal();
              }
-             if (event.target === reportModal) { // إغلاق نافذة التقرير عند النقر خارجها
+             if (event.target === reportModal) {
                  closeReportModal();
+             }
+             if (event.target === optionsModal) { 
+                 closeOptionsModal();
              }
          });
 
@@ -2150,8 +2240,9 @@
             // تأكد من إخفاء كل النوافذ في البداية 
             closeChat(null); 
             closeAddThingModal();
-            closeNotificationModal(); // إغلاق نافذة الإشعارات عند التحميل
-            closeReportModal(); // إغلاق نافذة التقرير عند التحميل
+            closeNotificationModal(); 
+            closeReportModal(); 
+            closeOptionsModal(); // إغلاق نافذة الخيارات عند التحميل
         });
     </script>
 </body>

